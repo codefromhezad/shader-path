@@ -14,7 +14,7 @@ shaders tinkering.
 	    canvasContainer:    '#container',
 	    onSceneInit: function() { $('.loading').remove(); },
 	    uniforms: {
-	        u_accumulatorFrame: {type; "int", value: 0}
+	        u_uniformName: {type; "i", value: 0}
 	    }
 	});
 
