@@ -42,11 +42,13 @@ var PLUGIN_NAME = 'THREEShaderHelper';
             screenPlane   = new THREE.PlaneBufferGeometry( 2, 2 );
 
         var shaderUniforms = {
-            u_screenSize: { type: "v2", value: new THREE.Vector2(opts.canvasSize.w, opts.canvasSize.h) },
-            u_frameNumber: {type: "int", value: 0}
+            u_screenSize:  { type: "v2", value: new THREE.Vector2(opts.canvasSize.w, opts.canvasSize.h) },
+            u_frameCount: { type: "i", value: 0 }
         };
 
-        $.extend(shaderUniforms, opts.uniforms);
+        shaderUniforms = $.extend(shaderUniforms, opts.uniforms);
+
+        logger.as('Declared uniforms').info(shaderUniforms);
 
         threeCamera.position.z = 1;
         threeRenderer.setPixelRatio( window.devicePixelRatio );
@@ -71,7 +73,6 @@ var PLUGIN_NAME = 'THREEShaderHelper';
         /* The actual rendering function. This will be called later (we'll check if
            we need to load some shaders files beforehand first. Check the next comment) */
         var renderMain = function() {
-
             var screenPlaneMaterial = new THREE.ShaderMaterial({
                 uniforms: shaderUniforms,
                 vertexShader: opts.vertexShaderContents,
@@ -94,9 +95,10 @@ var PLUGIN_NAME = 'THREEShaderHelper';
             threeRenderer.setSize( opts.canvasSize.w, opts.canvasSize.h );
 
             var renderFrame = function() {
-                threeRenderer.render( threeScene, threeCamera );
 
-                screenPlaneMaterial.uniforms.u_frameNumber += 1;
+                threeRenderer.render( threeScene, threeCamera );
+                screenPlaneMesh.material.uniforms.u_frameCount.value += 1;
+                
                 window.requestAnimationFrame(renderFrame);
             }
 

@@ -22,4 +22,4 @@ shaders tinkering.
 ## Default uniforms usable in shader files / content 
 
 * u_screenSize : {x: 600.0, y: 600.0} for a 600x600 screen
-* u_frameNumber : The frame number since beginning of rendering. Starts at 0. On the 956th frame, u_frameNumber will equal ... 956
+* u_frameCount : The frame number since beginning of rendering. Starts at 0. On the 956th frame, u_frameCount will equal ... 956

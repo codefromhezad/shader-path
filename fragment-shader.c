@@ -1,7 +1,8 @@
 uniform vec2 u_screenSize;
+uniform int u_frameCount;
 
 float rand(vec2 co){
-    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+    return fract(sin(dot(co.xy, vec2(12.9898,78.233))) * 43758.5453);
 }
 
 struct SphereEntity {
@@ -58,7 +59,7 @@ void main() {
         dot(viewVector, camera.coordinateSystem[2])
     ));
 
-    float noiseValue = rand(vec2(baseRay.direction.x, baseRay.direction.y));
+    float noiseValue = dot(vec2(1.0, 1.0), vec2(baseRay.direction.x + float(u_frameCount) * 0.001, baseRay.direction.y));
 
     float r = noiseValue;
     float g = noiseValue;
