@@ -59,7 +59,16 @@ void main() {
         dot(viewVector, camera.coordinateSystem[2])
     ));
 
-    float noiseValue = dot(vec2(1.0, 1.0), vec2(baseRay.direction.x + float(u_frameCount) * 0.001, baseRay.direction.y));
+    float noiseValue = rand(vec2(
+        dot(
+            vec2(1.0, 1.0),
+            vec2(baseRay.direction.x + float(u_frameCount) * 0.001, baseRay.direction.y)
+        ),
+        dot(
+            vec2(1.0, 1.0),
+            vec2(baseRay.direction.y + float(u_frameCount) * 0.001, baseRay.direction.x)
+        )
+    ));
 
     float r = noiseValue;
     float g = noiseValue;
