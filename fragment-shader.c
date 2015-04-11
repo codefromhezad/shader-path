@@ -1,5 +1,9 @@
 uniform vec2 u_screenSize;
 
+float rand(vec2 co){
+    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+}
+
 struct SphereEntity {
     vec3 origin;
     float radius;
@@ -54,9 +58,11 @@ void main() {
         dot(viewVector, camera.coordinateSystem[2])
     ));
 
-    float r = (baseRay.direction.x + 1.0) / 2.0;
-    float g = (baseRay.direction.y + 1.0) / 2.0;
-    float b = (baseRay.direction.z + 1.0) / 2.0;
+    float noiseValue = rand(vec2(baseRay.direction.x, baseRay.direction.y));
+
+    float r = noiseValue;
+    float g = noiseValue;
+    float b = noiseValue;
     
     gl_FragColor = vec4(r, g, b, 1.0);
 }
