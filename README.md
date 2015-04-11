@@ -1,15 +1,11 @@
-Testing stuff with Pathtracing (or maybe Raytracing first ...) and Fragment Shaders
-
-Using:
-* jQuery to help with DOM manipulation,
-* THREE.js to help with the base WebGL Material/Shader handling
+Testing stuff with Pathtracing (or maybe Raytracing first ...) and WebGL Shaders
 
 There is also, a custom made jQuery plugin that heavily uses THREE.js to quickly
-setup a Plane geometry and use it as a surface for shaders tinkering.
+load external shader files and setup a Plane geometry to use it as a surface for 
+shaders tinkering.
 
 
-
-## THREEShaderHelper start example : 
+## THREEShaderHelper example : 
 
 	$.THREEShaderHelper({
 	    debug: true,
@@ -22,7 +18,8 @@ setup a Plane geometry and use it as a surface for shaders tinkering.
 	    }
 	});
 
+
 ## Default uniforms usable in shader files / content 
 
-* u_screenSize : 600x600 for a 600x600 screen
-* u_frameNumber : The absolute frame number. On the 956th frame, u_frameNumber will equal ... 956
+* u_screenSize : {x: 600.0, y: 600.0} for a 600x600 screen
+* u_frameNumber : The frame number since beginning of rendering. Starts at 0. On the 956th frame, u_frameNumber will equal ... 956
