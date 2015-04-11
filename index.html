@@ -30,10 +30,13 @@
 
             $.THREEShaderHelper({
                 debug: true,
-                fragmentShaderFile:  'fragment-shader.c',
-                canvasSize:      {w: 600, h: 600},
-                canvasContainer: '#container',
-                onSceneInit: function() { $('.loading').remove(); }
+                fragmentShaderFile: 'fragment-shader.c',
+                canvasSize:         {w: 600, h: 600},
+                canvasContainer:    '#container',
+                onSceneInit: function() { $('.loading').remove(); },
+                uniforms: {
+                    u_accumulatorFrame: {type: "int", value: 0}
+                }
             });
                         
         });
