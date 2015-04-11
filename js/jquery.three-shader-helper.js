@@ -19,19 +19,20 @@ var PLUGIN_NAME = 'THREEShaderHelper';
         var opts = $.extend(defaults, opts);
 
         logger.isActive = opts.debug;
+        logger.domainPadLength = 10;
 
 
         /* Initial shaders to load debug logs */
         if( opts.vertexShaderFile ) {
-            logger.as('Vertex Shader').info('Using file', opts.vertexShaderFile);
+            logger.as('Init').info('Loading vertex shader file ...');
         } else {
-            logger.as('Vertex Shader').info('Using default shader.');
+            logger.as('Init').info('Using default vertex shader.');
         }
 
         if( opts.fragmentShaderFile ) {
-            logger.as('Fragment Shader').info('Using file', opts.fragmentShaderFile);
+            logger.as('Init').info('Loading fragment shader file ...');
         } else {
-            logger.as('Fragment Shader').info('Using default shader.');
+            logger.as('Init').info('Using default fragment shader.');
         }
 
 
@@ -48,7 +49,7 @@ var PLUGIN_NAME = 'THREEShaderHelper';
 
         shaderUniforms = $.extend(shaderUniforms, opts.uniforms);
 
-        logger.as('Declared uniforms').info(shaderUniforms);
+        logger.as('Init').info('Declared uniforms', shaderUniforms);
 
         threeCamera.position.z = 1;
         threeRenderer.setPixelRatio( window.devicePixelRatio );
@@ -60,13 +61,13 @@ var PLUGIN_NAME = 'THREEShaderHelper';
         if( opts.vertexShaderFile ) {
             listOfDeferredLoaders.push( $.get(opts.vertexShaderFile, function(data) { 
                 opts.vertexShaderContents = data; 
-                logger.as('Vertex Shader').info('Loaded shader file.');
+                logger.as('Init').info('Vertex shader file loaded.');
             }) );
         }
         if( opts.fragmentShaderFile ) {
             listOfDeferredLoaders.push( $.get(opts.fragmentShaderFile, function(data) { 
                 opts.fragmentShaderContents = data; 
-                logger.as('Fragment Shader').info('Loaded shader file.');
+                logger.as('Init').info('Fragment shader file loaded.');
             }) );
         }
 
