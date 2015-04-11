@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+    <style>
+        html, body {
+            padding: 0;
+            margin: 0;
+        }
+
+        canvas {
+            display: block;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="container"><span class="loading">Loading ...</span></div>
+
+
+    <script src="js/libs/three.min.js"></script>
+    <script src="js/libs/jquery.js"></script>
+    <script src="js/libs/helpers.min.js"></script>
+    
+    <script src="js/jquery.three-shader-helper.js"></script>
+
+    <script>
+
+        /* Main */
+        $( function() {
+
+            $.THREEShaderHelper({
+                debug: true,
+                fragmentShaderFile:  'fragment-shader.c',
+                canvasSize:      {w: 600, h: 600},
+                canvasContainer: '#container',
+                onSceneInit: function() { $('.loading').remove(); }
+            });
+                        
+        });
+    </script>
+</body>
+</html>
