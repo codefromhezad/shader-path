@@ -22,12 +22,3 @@ struct CameraEntity {
     vec2 fov;
     float nearClipPlaneDist;
 };
-
-struct Intersection {
-    bool intersect;
-    float distance;
-    ObjectEntity object;
-    RayEntity ray;
-    vec3 intersectionPoint;
-    vec3 normal;
-};
