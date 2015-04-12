@@ -157,11 +157,7 @@ Intersection getClosestIntersection(RayEntity ray) {
 
 /* Global Scene calc functions (Lighting/Shading mainly) */
 
-bool lightPositionIsVisibleFrom(vec3 lightPos, vec3 point) {
-    RayEntity pointToLightRay;
-    pointToLightRay.origin = point;
-    pointToLightRay.direction = normalize(lightPos - point);
-
+bool lightPositionIsVisibleFrom(RayEntity pointToLightRay) {
     Intersection intersect = getClosestIntersection(pointToLightRay);
 
     return ! intersect.intersect;
@@ -181,8 +177,12 @@ vec3 getLightContribution(Intersection intersection) {
         float intensity = u_lights_intensity[i];
         
         vec3 adaptedIntersectionPoint = intersection.intersectionPoint + intersection.normal * PATH_FLOAT_EPSILON;
+        
+        RayEntity pointToLightRay;
+        pointToLightRay.origin = adaptedIntersectionPoint;
+        pointToLightRay.direction = normalize(o - adaptedIntersectionPoint);
 
-        if( lightPositionIsVisibleFrom(o, adaptedIntersectionPoint) ) {
+        if( lightPositionIsVisibleFrom(pointToLightRay) ) {
             finalColor.r += 0.2;
             finalColor.g += 0.2;
             finalColor.b += 0.2;
