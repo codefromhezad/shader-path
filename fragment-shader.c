@@ -1,4 +1,4 @@
-const int sceneNumLights = {{ js: num_lights }};
+const int sceneNumLights = {{ var num_lights }};
 const int sceneNumObjects = 1;
 
 uniform vec2 u_screen_size;
@@ -11,10 +11,10 @@ uniform float u_lights_intensity[ sceneNumLights ];
 
 
 
-{{ js_include: defines }}
-{{ js_include: structs }}
-{{ js_include: intersection }}
-{{ js_include: obj-sphere-functions }}
+{{ include defines }}
+{{ include structs }}
+{{ include intersection }}
+{{ include obj-sphere-functions }}
 
 
 
@@ -23,7 +23,7 @@ ObjectEntity sceneObjects[ 1 ];
 
 
 
-{{ js_include: raytracing }}
+{{ include raytracing }}
 
 
 

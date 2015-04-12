@@ -93,7 +93,7 @@ var PLUGIN_NAME = 'THREEShaderHelper';
             if( opts.shaderIncludeContents ) {
                 logger.as('Parser').info('Injected includes', opts.shaderIncludeFiles);
                 for( var includeName in opts.shaderIncludeContents ) {
-                    var includeRegexp = new RegExp("\{\{ *js_include *: *"+includeName+" *\}\}", 'g');
+                    var includeRegexp = new RegExp("\{\{ *include +"+includeName+" *\}\}", 'g');
                     opts.vertexShaderContents = opts.vertexShaderContents.replace(includeRegexp, opts.shaderIncludeContents[includeName]);
                     opts.fragmentShaderContents = opts.fragmentShaderContents.replace(includeRegexp, opts.shaderIncludeContents[includeName]);
                 }
@@ -102,7 +102,7 @@ var PLUGIN_NAME = 'THREEShaderHelper';
             if( opts.shaderInject ) {
                 logger.as('Parser').info('Injected variables', opts.shaderInject);
                 for( var varName in opts.shaderInject ) {
-                    var injectorRegexp = new RegExp("\{\{ *js *: *"+varName+" *\}\}", 'g');
+                    var injectorRegexp = new RegExp("\{\{ *var +"+varName+" *\}\}", 'g');
                     opts.vertexShaderContents = opts.vertexShaderContents.replace(injectorRegexp, opts.shaderInject[varName]);
                     opts.fragmentShaderContents = opts.fragmentShaderContents.replace(injectorRegexp, opts.shaderInject[varName]);
                 }
