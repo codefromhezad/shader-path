@@ -33,7 +33,6 @@
                 onFrame: function(uniforms) {
                     uniforms.u_lights_origin.value[0].x = 2.0 * Math.cos(uniforms.u_frame_count.value / 40.0 )
                     uniforms.u_lights_origin.value[0].z = 2.0 * Math.sin(uniforms.u_frame_count.value / 40.0 )
-                    return uniforms;
                 },
                 shaderInject: {
                     num_lights: 1

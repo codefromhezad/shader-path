@@ -112,11 +112,7 @@ var PLUGIN_NAME = 'THREEShaderHelper';
                 screenPlaneMesh.material.uniforms.u_frame_count.value += 1;
                 
                 if( opts.onFrame ) {
-                    var uniformsUpdate = opts.onFrame(screenPlaneMesh.material.uniforms);
-
-                    if( uniformsUpdate ) {
-                        screenPlaneMesh.material.uniforms = uniformsUpdate;
-                    }
+                    opts.onFrame(screenPlaneMesh.material.uniforms);
                 }
 
                 window.requestAnimationFrame(renderFrame);
