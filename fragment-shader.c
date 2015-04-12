@@ -1,11 +1,50 @@
+
+
+
+/* Defining constants */
+
+#define PATH_MAX_LIGHTS 10
+#define PATH_MAX_OBJECTS 10
+
+#define PATH_FLOAT_EPSILON 0.0001
+#define PATH_INFINITY 9999999.0
+
+#define PATH_OBJECT_SPHERE 1
+
+
+
+/* Defining uniforms */
+
+const int sceneNumLights = {{js:num_lights}};
+const int sceneNumObjects = 1;
+
 uniform vec2 u_screenSize;
 uniform int u_frameCount;
+uniform vec3 u_lights_position[ sceneNumLights ];
+uniform vec3 u_lights_color[ sceneNumLights ];
+uniform int u_lights_intensity[ sceneNumLights ];
 
-const float FLOAT_EPSILON = 0.0001;
 
-struct SphereEntity {
+/* Defining Structs */
+
+struct MaterialEntity {
+    vec3 baseColor;
+    float diffuse;
+    float specular;
+    int shininess;
+};
+
+struct LightEntity {
+    vec3 origin;
+    vec3 color;
+    float intensity;
+};
+
+struct ObjectEntity {
+    int objectType;
     vec3 origin;
     float radius;
+    MaterialEntity material;
 };
 
 struct RayEntity {
@@ -23,8 +62,13 @@ struct CameraEntity {
 struct Intersection {
     bool intersect;
     float distance;
+    ObjectEntity object;
     vec3 intersectionPoint;
 };
+
+
+
+/* Defining raytracing functions */
 
 vec3 getIntersectPoint(RayEntity ray, float dist) {
     return ray.origin + ray.direction * dist;
@@ -36,15 +80,16 @@ Intersection dontIntersect() {
     return intersect;
 }
 
-Intersection doesIntersect(RayEntity ray, float distance) {
+Intersection doesIntersect(RayEntity ray, ObjectEntity object, float distance) {
     Intersection intersect;
     intersect.intersect = true;
+    intersect.object = object;
     intersect.distance = distance;
     intersect.intersectionPoint = getIntersectPoint(ray, distance);
     return intersect;
 }
 
-Intersection sphereIntersect(RayEntity ray, SphereEntity sphere) {
+Intersection sphereIntersect(RayEntity ray, ObjectEntity sphere) {
     float A = dot(ray.direction, ray.direction);
     vec3 originToCenterRay = ray.origin - sphere.origin;
     float B = dot(originToCenterRay, ray.direction) * 2.0;
@@ -57,14 +102,14 @@ Intersection sphereIntersect(RayEntity ray, SphereEntity sphere) {
         float distance1 = (-B - delta) / (2.0 * A);
         float distance2 = (-B + delta) / (2.0 * A);
         
-        if(distance2 > FLOAT_EPSILON) {
-            if(distance1 < FLOAT_EPSILON) {
+        if(distance2 > PATH_FLOAT_EPSILON) {
+            if(distance1 < PATH_FLOAT_EPSILON) {
                 if(distance2 < distance1) {
-                    return doesIntersect(ray, distance2);
+                    return doesIntersect(ray, sphere, distance2);
                 }
             } else {
                 if(distance1 < distance2) {
-                    return doesIntersect(ray, distance1);
+                    return doesIntersect(ray, sphere, distance1);
                 }
             }
         }
@@ -73,12 +118,21 @@ Intersection sphereIntersect(RayEntity ray, SphereEntity sphere) {
     return dontIntersect();
 }
 
-vec3 sphereNormal(vec3 intersectPoint, SphereEntity sphere) {
+vec3 sphereNormal(vec3 intersectPoint, ObjectEntity sphere) {
     return normalize(intersectPoint - sphere.origin);
 }
 
 
-SphereEntity sphere;
+
+/* Global Scene variables */
+
+LightEntity sceneLights[ sceneNumLights ];
+ObjectEntity sceneObjects[ 1 ]; 
+
+
+
+/* And here we go ! */
+
 CameraEntity camera;
 RayEntity baseRay;
 
@@ -87,8 +141,17 @@ void main() {
 
     /* Those settings and calculations should be done only once
        and not for each pixel. They should be out of main() but how ? */
-    sphere.origin = vec3(0.0, 0.0, 2.0);
-    sphere.radius = 1.0;
+    sceneObjects[0].objectType = PATH_OBJECT_SPHERE;
+    sceneObjects[0].origin = vec3(0.0, 0.0, 2.0);
+    sceneObjects[0].radius = 1.0;
+    sceneObjects[0].material.baseColor = vec3(0.8, 0.8, 1.0);
+    sceneObjects[0].material.diffuse = 0.8;
+    sceneObjects[0].material.specular = 1.0;
+    sceneObjects[0].material.shininess = 80;
+
+    sceneLights[0].origin = vec3(2.0, 2.0, 1.0);
+    sceneLights[0].color = vec3(1.0, 1.0, 1.0);
+    sceneLights[0].intensity = 1.0;
 
     camera.origin = vec3(0.0, 0.0, 0.0);
     camera.coordinateSystem[0] = vec3(1.0, 0.0, 0.0);
@@ -119,12 +182,26 @@ void main() {
     float g = 0.0;
     float b = 0.0;
 
-    Intersection actualIntersection = sphereIntersect(baseRay, sphere);
+    Intersection closestIntersection;
+    closestIntersection.distance = PATH_INFINITY;
+    closestIntersection.intersect = false;
 
-    if( actualIntersection.intersect ) {
+    Intersection actualIntersection;
+    for(int i = 0; i < sceneNumObjects; i++) {
+        if( sceneObjects[i].objectType == PATH_OBJECT_SPHERE ) {
+            actualIntersection = sphereIntersect(baseRay, sceneObjects[i]);
+        }
 
-        vec3 normal = sphereNormal(actualIntersection.intersectionPoint, sphere);
+        if( actualIntersection.intersect && actualIntersection.distance < closestIntersection.distance ) {
+            closestIntersection = actualIntersection;
+        }
+    }
 
+    if( closestIntersection.intersect ) {
+
+        vec3 normal = sphereNormal(closestIntersection.intersectionPoint, closestIntersection.object);
+
+        //float lightContribution = dot(normal,)
         r = 1.0;
         g = 1.0;
         b = 1.0;

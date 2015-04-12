@@ -14,7 +14,8 @@ var PLUGIN_NAME = 'THREEShaderHelper';
             canvasSize:     { w: 400, h: 400 },
             canvasContainer: 'body',
             onSceneInit: null,
-            uniforms: {}
+            uniforms: {},
+            shaderInject: {}
         }
         var opts = $.extend(defaults, opts);
 
@@ -74,6 +75,15 @@ var PLUGIN_NAME = 'THREEShaderHelper';
         /* The actual rendering function. This will be called later (we'll check if
            we need to load some shaders files beforehand first. Check the next comment) */
         var renderMain = function() {
+
+            if( opts.shaderInject ) {
+                for( var varName in opts.shaderInject ) {
+                    var injectorRegexp = new RegExp("\{\{\s*js:"+varName+"\s*\}\}", 'g');
+                    opts.vertexShaderContents = opts.vertexShaderContents.replace(injectorRegexp, opts.shaderInject[varName]);
+                    opts.fragmentShaderContents = opts.fragmentShaderContents.replace(injectorRegexp, opts.shaderInject[varName]);
+                }
+            }
+
             var screenPlaneMaterial = new THREE.ShaderMaterial({
                 uniforms: shaderUniforms,
                 vertexShader: opts.vertexShaderContents,

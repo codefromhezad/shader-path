@@ -19,13 +19,27 @@
 
         /* Main */
         $( function() {
-
+            
             $.THREEShaderHelper({
                 debug: true,
                 fragmentShaderFile: 'fragment-shader.c',
                 canvasSize:         {w: 600, h: 600},
                 canvasContainer:    '#container',
                 onSceneInit: function() { $('.loading').remove(); },
+                shaderInject: {
+                    num_lights: 1
+                },
+                uniforms: {
+                    u_lights_position: { type: "v3v", value: [ 
+                        new THREE.Vector3( 1.0, 1.0, 1.0 ) 
+                    ] },
+                    u_lights_color: { type: "v3v", value: [
+                        new THREE.Vector3( 1.0, 1.0, 1.0 )
+                    ] },
+                    u_lights_intensity: { type: "fv1", value: [ 
+                        1.0
+                    ] }
+                }
             });
                         
         });
