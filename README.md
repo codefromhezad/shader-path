@@ -41,23 +41,21 @@ shaders tinkering.
 
 ## Including external code into shaders (imitating C's #include statements)
 
-Any occurence of "{{js\_include:include\_name}}" in the shader will be replaced by the contents of the file identified by include\_name (See example above to see how this is used from JS frontend. See below to see how it used from a shader file)
+Any occurence of "{{ include _include\_name_ }}" in the shader will be replaced by the contents of the file identified by _include\_name_.
 
-### Shader file Example
+
+
+## Injecting variables into shaders
+
+Any occurence of "{{ var _var\_name_ }}" in the shader will be replaced with the value identified by _var\_name_.
+
+
+
+## Shader injection Example
 	
-	{{js_include:structs}} // Will be replaced with contents from 'structs.c' file
+	{{ include structs }} // Will be replaced with contents from the file referenced by "structs"
 
-	const int sceneNumLights = {{js:num_lights}}; // Will replace {{...}} with num_lights value
-
-
-
-## Injecting variables in shaders
-
-I don't know how useful it will be but since we can't access arrays with a variable index in a fragment shader, I came up
-with this hack.
-
-It works like a templating language: Any occurence of "{{js:var\_name}}" in the shader will be replaced with the value 
-passed in shaderInject object (eg: using the previous example, "{{js:num\_lights}}" will be replaced with "1" in the shader)
+	const int sceneNumLights = {{ var num_lights }}; // Will replace {{...}} with value referenced by num_lights
 
 
 
