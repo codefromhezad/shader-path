@@ -2,6 +2,7 @@ struct MaterialEntity {
     vec4 diffuseColor;
     float specular;
     float shininess;
+    float reflection;
 };
 
 struct ObjectEntity {

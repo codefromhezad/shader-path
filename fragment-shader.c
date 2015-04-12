@@ -40,6 +40,7 @@ void main() {
     sceneObjects[0].material.diffuseColor = vec4(0.9, 0.9, 1.0, 1.0);
     sceneObjects[0].material.specular = 1.0;
     sceneObjects[0].material.shininess = 100.0;
+    sceneObjects[0].material.reflection = 1.0;
 
     sceneObjects[1].objectType = PATH_OBJECT_SPHERE;
     sceneObjects[1].origin = vec3(200.0, 100.0, 400.0);
@@ -47,6 +48,7 @@ void main() {
     sceneObjects[1].material.diffuseColor = vec4(0.9, 0.9, 1.0, 1.0);
     sceneObjects[1].material.specular = 1.0;
     sceneObjects[1].material.shininess = 100.0;
+    sceneObjects[1].material.reflection = 0.0;
 
     sceneObjects[2].objectType = PATH_OBJECT_PLANE;
     sceneObjects[2].origin = vec3(0.0, -50.0, 100.0);
@@ -54,6 +56,7 @@ void main() {
     sceneObjects[2].material.diffuseColor = vec4(1.0, 0.9, 0.9, 1.0);
     sceneObjects[2].material.specular = 1.0;
     sceneObjects[2].material.shininess = 80.0;
+    sceneObjects[2].material.reflection = 0.0;
 
     camera.origin = vec3(0.0, 200.0, 0.0);
     camera.coordinateSystem[0] = vec3(1.0, 0.0, 0.0);
@@ -82,10 +85,27 @@ void main() {
 
     vec4 finalColor = vec4(0.0, 0.0, 0.0, 1.0);
 
-    Intersection closestIntersection = getClosestIntersection(baseRay);
+    for(int i = 0; i < PATH_MAX_ITERATIONS; i++) {
+        Intersection closestIntersection = getClosestIntersection(baseRay);
 
-    if( closestIntersection.intersect ) {
-        finalColor = getLightContributionColor(closestIntersection);
+        if( closestIntersection.intersect ) {
+            vec4 currentColor = getLightContributionColor(closestIntersection);
+
+            float reflection = closestIntersection.object.material.reflection;
+            finalColor += (1.0 - reflection) * currentColor;
+
+            if( reflection > PATH_FLOAT_EPSILON ) {
+                vec3 intersectionNormal = getNormal(closestIntersection);
+                vec3 adaptedIntersectionPoint = closestIntersection.intersectionPoint + intersectionNormal * PATH_FLOAT_EPSILON;
+
+                baseRay.origin = adaptedIntersectionPoint;
+                baseRay.direction = reflect(closestIntersection.ray.direction, intersectionNormal);
+            } else {
+                break;
+            }
+        } else {
+            break;
+        }
     }
     
     gl_FragColor = finalColor;
