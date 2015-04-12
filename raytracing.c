@@ -74,7 +74,7 @@ vec4 getLightContributionColor(Intersection intersection) {
             float specularFactor = clamp(dot( intersectionNormal, lightReflect ), 0.0, 1.0);
 
             if( specularFactor > PATH_FLOAT_EPSILON ) {
-                vec4 specularColor = intensity * c * objectMaterial.specular * max(pow(specularFactor, objectMaterial.shininess), 0.0);
+                vec4 specularColor = intensity * c * objectMaterial.specular * max(pow(specularFactor, objectMaterial.shininess * intensity * intensity), 0.0);
                 specularColor = clamp(specularColor, 0.0, 1.0);
 
                 finalSpecularColor += specularColor;
