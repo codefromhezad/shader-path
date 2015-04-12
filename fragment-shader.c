@@ -13,13 +13,13 @@ uniform float u_lights_intensity[ sceneNumLights ];
 
 {{ include defines }}
 {{ include structs }}
-{{ include intersection }}
 {{ include obj-sphere-functions }}
+{{ include obj-plane-functions }}
 
 
 
 
-ObjectEntity sceneObjects[ 1 ]; 
+ObjectEntity sceneObjects[ 2 ]; 
 
 
 
@@ -37,11 +37,18 @@ void main() {
     /* Those settings and calculations should be done only once
        and not for each pixel. They should be out of main() but how ? */
     sceneObjects[0].objectType = PATH_OBJECT_SPHERE;
-    sceneObjects[0].origin = vec3(0.0, 0.0, 2.0);
+    sceneObjects[0].origin = vec3(0.0, 0.5, 2.0);
     sceneObjects[0].radius = 1.0;
     sceneObjects[0].material.diffuseColor = vec4(0.9, 0.9, 1.0, 1.0);
     sceneObjects[0].material.specular = 1.0;
     sceneObjects[0].material.shininess = 400.0;
+
+    sceneObjects[1].objectType = PATH_OBJECT_PLANE;
+    sceneObjects[1].origin = vec3(0.0, -1.0, 0.0);
+    sceneObjects[1].normal = vec3(0.0, 1.0, 0.0);
+    sceneObjects[1].material.diffuseColor = vec4(1.0, 0.9, 0.9, 1.0);
+    sceneObjects[1].material.specular = 0.0;
+    sceneObjects[1].material.shininess = 80.0;
 
     camera.origin = vec3(0.0, 0.0, 0.0);
     camera.coordinateSystem[0] = vec3(1.0, 0.0, 0.0);

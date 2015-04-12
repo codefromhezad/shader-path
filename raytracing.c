@@ -8,6 +8,10 @@ Intersection getClosestIntersection(RayEntity ray) {
             actualIntersection = sphereIntersect(ray, sceneObjects[i]);
         }
 
+        if( sceneObjects[i].objectType == PATH_OBJECT_PLANE ) { 
+            actualIntersection = planeIntersect(ray, sceneObjects[i]);
+        }
+
         if( actualIntersection.intersect && actualIntersection.distance < closestIntersection.distance ) {
             closestIntersection = actualIntersection;
         }
@@ -20,6 +24,11 @@ vec3 getNormal(Intersection intersect) {
     if( intersect.object.objectType == PATH_OBJECT_SPHERE ) {
         return sphereNormal(intersect.intersectionPoint, intersect.object);
     }
+
+    if( intersect.object.objectType == PATH_OBJECT_PLANE ) {
+        return planeNormal(intersect.intersectionPoint, intersect.object);
+    }
+
     return NULL_VECTOR;
 }
 
