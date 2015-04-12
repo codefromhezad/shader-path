@@ -27,6 +27,7 @@ uniform vec4 u_lights_color[ sceneNumLights ];
 uniform float u_lights_intensity[ sceneNumLights ];
 
 
+
 /* Defining Structs */
 
 struct MaterialEntity {
@@ -187,9 +188,7 @@ vec4 getLightContributionColor(Intersection intersection) {
 
             if( diffuseFactor > PATH_FLOAT_EPSILON ) {
                 vec4 diffuseColor = intensity * c * objectMaterial.diffuseColor * diffuseFactor;
-                diffuseColor.r = clamp(diffuseColor.r, 0.0, 1.0);
-                diffuseColor.g = clamp(diffuseColor.g, 0.0, 1.0);
-                diffuseColor.b = clamp(diffuseColor.b, 0.0, 1.0);
+                diffuseColor = clamp(diffuseColor, 0.0, 1.0);
                 
                 finalDiffuseColor += diffuseColor;
             }
@@ -199,9 +198,7 @@ vec4 getLightContributionColor(Intersection intersection) {
 
             if( specularFactor > PATH_FLOAT_EPSILON ) {
                 vec4 specularColor = intensity * c * objectMaterial.specular * max(pow(specularFactor, objectMaterial.shininess), 0.0);
-                specularColor.r = clamp(specularColor.r, 0.0, 1.0);
-                specularColor.g = clamp(specularColor.g, 0.0, 1.0);
-                specularColor.b = clamp(specularColor.b, 0.0, 1.0);
+                specularColor = clamp(specularColor, 0.0, 1.0);
 
                 finalSpecularColor += specularColor;
             }
