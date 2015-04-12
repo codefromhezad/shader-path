@@ -15,6 +15,8 @@ var PLUGIN_NAME = 'THREEShaderHelper';
             canvasContainer: 'body',
             uniforms: {},
             shaderInject: {},
+            shaderIncludeFiles: {},
+            shaderIncludeContents: {},
             onSceneInit: null,
             onFrame: null
         }
@@ -72,14 +74,35 @@ var PLUGIN_NAME = 'THREEShaderHelper';
                 logger.as('Init').info('Fragment shader file loaded.');
             }) );
         }
+        if( opts.shaderIncludeFiles ) {
+            for( var includeName in opts.shaderIncludeFiles ) {
+                var includeFile = opts.shaderIncludeFiles[includeName];
+
+                ( function(includeName, includeFile) {
+                    listOfDeferredLoaders.push( $.get( includeFile, function(data) {
+                        opts.shaderIncludeContents[includeName] = data;
+                    }) );
+                } ) (includeName, includeFile);
+            }
+        }
 
         /* The actual rendering function. This will be called later (we'll check if
            we need to load some shaders files beforehand first. Check the next comment) */
         var renderMain = function() {
 
+            if( opts.shaderIncludeContents ) {
+                logger.as('Before render').info('Injected includes', opts.shaderIncludeFiles);
+                for( var includeName in opts.shaderIncludeContents ) {
+                    var includeRegexp = new RegExp("\{\{\s*js_include\s*:\s*"+includeName+"\s*\}\}", 'g');
+                    opts.vertexShaderContents = opts.vertexShaderContents.replace(includeRegexp, opts.shaderIncludeContents[includeName]);
+                    opts.fragmentShaderContents = opts.fragmentShaderContents.replace(includeRegexp, opts.shaderIncludeContents[includeName]);
+                }
+            }
+
             if( opts.shaderInject ) {
+                logger.as('Before render').info('Injected variables', opts.shaderInject);
                 for( var varName in opts.shaderInject ) {
-                    var injectorRegexp = new RegExp("\{\{\s*js:"+varName+"\s*\}\}", 'g');
+                    var injectorRegexp = new RegExp("\{\{\s*js\s*:\s*"+varName+"\s*\}\}", 'g');
                     opts.vertexShaderContents = opts.vertexShaderContents.replace(injectorRegexp, opts.shaderInject[varName]);
                     opts.fragmentShaderContents = opts.fragmentShaderContents.replace(injectorRegexp, opts.shaderInject[varName]);
                 }
