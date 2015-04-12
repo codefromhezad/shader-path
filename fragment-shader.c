@@ -1,6 +1,9 @@
 uniform vec2 u_screenSize;
 uniform int u_frameCount;
 
+const float FLOAT_EPSILON = 0.0001;
+const float NO_INTERSECT = -1.0;
+
 float rand(vec2 co){
     return fract(sin(dot(co.xy, vec2(12.9898,78.233))) * 43758.5453);
 }
@@ -21,6 +24,40 @@ struct CameraEntity {
     vec2 fov;
     float nearClipPlaneDist;
 };
+
+float sphereIntersect(RayEntity ray, SphereEntity sphere) {
+    float A = dot(ray.direction, ray.direction);
+    vec3 originToCenterRay = ray.origin - sphere.origin;
+    float B = dot(originToCenterRay, ray.direction) * 2.0;
+    float C = dot(originToCenterRay, originToCenterRay) - sphere.radius * sphere.radius;
+
+    float delta = B * B - 4.0 * A * C;
+
+    if(delta > 0.0) {
+        delta = sqrt(delta);
+        float distance1 = (-B - delta) / (2.0 * A);
+        float distance2 = (-B + delta) / (2.0 * A);
+        
+        if(distance2 > FLOAT_EPSILON) {
+            if(distance1 < FLOAT_EPSILON) {
+                if(distance2 < distance1) {
+                    return distance2;
+                }
+            } else {
+                if(distance1 < distance2) {
+                    return distance1;
+                }
+            }
+        }
+    }
+
+    return NO_INTERSECT;
+}
+
+vec3 sphereNormal(vec3 intersectPoint, SphereEntity sphere) {
+    return normalize(intersectPoint - sphere.origin);
+}
+
 
 SphereEntity sphere;
 CameraEntity camera;
