@@ -187,7 +187,7 @@ vec4 getLightContributionColor(Intersection intersection) {
             float diffuseFactor = clamp(dot(intersection.normal, pointToLightRay.direction), 0.0, 1.0);
 
             if( diffuseFactor > PATH_FLOAT_EPSILON ) {
-                vec4 diffuseColor = intensity * c * objectMaterial.diffuseColor * diffuseFactor;
+                vec4 diffuseColor = intensity * diffuseFactor * c * objectMaterial.diffuseColor;
                 diffuseColor = clamp(diffuseColor, 0.0, 1.0);
                 
                 finalDiffuseColor += diffuseColor;
