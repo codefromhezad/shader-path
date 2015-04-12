@@ -41,9 +41,9 @@ shaders tinkering.
 
 ## Including external code into shaders (imitating C's #include statements)
 
-Any occurence of "{{js\_include:include\_name}}" in the shader will be replaced by the contents of the file identified by include\_name (See example above to see how this is used)
+Any occurence of "{{js\_include:include\_name}}" in the shader will be replaced by the contents of the file identified by include\_name (See example above to see how this is used from JS frontend. See below to see how it used from a shader file)
 
-### Example
+### Shader file Example
 	
 	{{js_include:structs}} // Will be replaced with contents from 'structs.c' file
 
