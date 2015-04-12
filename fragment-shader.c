@@ -183,14 +183,18 @@ vec3 getLightContribution(Intersection intersection) {
 
             MaterialEntity objectMaterial = intersection.object.material;
 
-            float diffuseFactor = dot(intersection.normal, pointToLightRay.direction);
+            float diffuseFactor = clamp(dot(intersection.normal, pointToLightRay.direction), 0.0, 1.0);
 
             if( diffuseFactor > PATH_FLOAT_EPSILON ) {
-                finalDiffuseColor += intensity * c * objectMaterial.diffuseColor * diffuseFactor;
+                vec3 diffuseColor = intensity * c * objectMaterial.diffuseColor * diffuseFactor;
+                diffuseColor.r = clamp(diffuseColor.r, 0.0, 1.0);
+                diffuseColor.g = clamp(diffuseColor.g, 0.0, 1.0);
+                diffuseColor.b = clamp(diffuseColor.b, 0.0, 1.0);
+                finalDiffuseColor += diffuseColor;
             }
 
             vec3 lightReflect = reflect(-pointToLightRay.direction, intersection.normal);
-            float specularFactor = dot( intersection.normal, lightReflect );
+            float specularFactor = clamp(dot( intersection.normal, lightReflect ), 0.0, 1.0);
 
             if( specularFactor > PATH_FLOAT_EPSILON ) {
                 finalSpecularColor += intensity * c * objectMaterial.specular * max(pow(specularFactor, float(objectMaterial.shininess)), 0.0);
