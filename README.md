@@ -41,5 +41,5 @@ passed in shaderInject object (eg: using the previous example, "{{js:num_lights}
 
 ## Default uniforms usable in shader files / content 
 
-* u_screenSize : {x: 600.0, y: 600.0} for a 600x600 screen
-* u_frameCount : The frame number since beginning of rendering. Starts at 0. On the 956th frame, u_frameCount will equal ... 956
+* u_screen_size : {x: 600.0, y: 600.0} for a 600x600 screen
+* u_frame_count : The frame number since beginning of rendering. Starts at 0. On the 956th frame, u_frameCount will equal ... 956

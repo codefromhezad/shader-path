@@ -44,8 +44,8 @@ var PLUGIN_NAME = 'THREEShaderHelper';
             screenPlane   = new THREE.PlaneBufferGeometry( 2, 2 );
 
         var shaderUniforms = {
-            u_screenSize:  { type: "v2", value: new THREE.Vector2(opts.canvasSize.w, opts.canvasSize.h) },
-            u_frameCount: { type: "i", value: 0 }
+            u_screen_size:  { type: "v2", value: new THREE.Vector2(opts.canvasSize.w, opts.canvasSize.h) },
+            u_frame_count: { type: "i", value: 0 }
         };
 
         shaderUniforms = $.extend(shaderUniforms, opts.uniforms);
@@ -108,7 +108,7 @@ var PLUGIN_NAME = 'THREEShaderHelper';
             var renderFrame = function() {
 
                 threeRenderer.render( threeScene, threeCamera );
-                screenPlaneMesh.material.uniforms.u_frameCount.value += 1;
+                screenPlaneMesh.material.uniforms.u_frame_count.value += 1;
                 
                 window.requestAnimationFrame(renderFrame);
             }

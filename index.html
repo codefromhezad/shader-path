@@ -20,6 +20,8 @@
         /* Main */
         $( function() {
 
+            var AMBIANT_COLOR = new THREE.Vector3(0.05, 0.05, 0.2);
+
             $.THREEShaderHelper({
                 debug: true,
                 fragmentShaderFile: 'fragment-shader.c',
@@ -30,6 +32,7 @@
                     num_lights: 1
                 },
                 uniforms: {
+                    u_ambiant_color: { type: "v3", value: AMBIANT_COLOR },
                     u_lights_origin: { type: "v3v", value: [ 
                         new THREE.Vector3( 2.0, 2.0, 1.0 ) 
                     ] },

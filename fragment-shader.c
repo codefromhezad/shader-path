@@ -18,8 +18,10 @@
 const int sceneNumLights = {{js:num_lights}};
 const int sceneNumObjects = 1;
 
-uniform vec2 u_screenSize;
-uniform int u_frameCount;
+uniform vec2 u_screen_size;
+uniform int u_frame_count;
+uniform vec3 u_ambiant_color;
+
 uniform vec3 u_lights_origin[ sceneNumLights ];
 uniform vec3 u_lights_color[ sceneNumLights ];
 uniform float u_lights_intensity[ sceneNumLights ];
@@ -133,14 +135,31 @@ ObjectEntity sceneObjects[ 1 ];
 
 /* Global Scene calc functions (Lighting/Shading mainly) */
 
+bool lightPositionIsVisibleFrom(vec3 lightPos, vec3 point) {
+    return true;
+}
+
 vec3 getLightContribution(Intersection intersection) {
+
+    vec3 ambiantColor = u_ambiant_color;
+    vec3 diffuseColor = vec3(0.0, 0.0, 0.0);
+    vec3 specularColor = vec3(0.0, 0.0, 0.0);
+
+    vec3 finalColor = ambiantColor;
+
     for(int i = 0; i < sceneNumLights; i++) {
         vec3 o = u_lights_origin[i];
         vec3 c = u_lights_color[i];
         float intensity = u_lights_intensity[i];
+
+        if( lightPositionIsVisibleFrom(o, intersection.intersectionPoint) ) {
+            finalColor.r += 0.2;
+            finalColor.g += 0.2;
+            finalColor.b += 0.2;
+        }
     }
 
-    return vec3(1.0, 1.0, 1.0);
+    return finalColor;
 }
 
 
@@ -151,7 +170,6 @@ CameraEntity camera;
 RayEntity baseRay;
 
 void main() {
-    gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
 
     /* Those settings and calculations should be done only once
        and not for each pixel. They should be out of main() but how ? */
@@ -168,13 +186,13 @@ void main() {
     camera.coordinateSystem[1] = vec3(0.0, 1.0, 0.0);
     camera.coordinateSystem[2] = vec3(0.0, 0.0, 1.0);
     camera.fov.x = 90.0;
-    camera.fov.y = camera.fov.x / (u_screenSize.x / u_screenSize.y);
+    camera.fov.y = camera.fov.x / (u_screen_size.x / u_screen_size.y);
     camera.nearClipPlaneDist = 1.0;
     /* ---------------------------------------------------- */
 
     vec2 homogenousPixelPosition;
-    homogenousPixelPosition.x = 2.0 * float(gl_FragCoord.x) / u_screenSize.x - 1.0;
-    homogenousPixelPosition.y = 2.0 * float(gl_FragCoord.y) / u_screenSize.y - 1.0;
+    homogenousPixelPosition.x = 2.0 * float(gl_FragCoord.x) / u_screen_size.x - 1.0;
+    homogenousPixelPosition.y = 2.0 * float(gl_FragCoord.y) / u_screen_size.y - 1.0;
 
     vec3 viewVector;
     viewVector.x = camera.nearClipPlaneDist * homogenousPixelPosition.x * tan(camera.fov.x / 2.0);
@@ -188,9 +206,9 @@ void main() {
         dot(viewVector, camera.coordinateSystem[2])
     ));
 
-    float r = 0.0;
-    float g = 0.0;
-    float b = 0.0;
+    float r = u_ambiant_color.r; 
+    float g = u_ambiant_color.g; 
+    float b = u_ambiant_color.b;
 
     Intersection closestIntersection;
     closestIntersection.distance = PATH_INFINITY;
