@@ -20,9 +20,9 @@ const int sceneNumObjects = 1;
 
 uniform vec2 u_screenSize;
 uniform int u_frameCount;
-uniform vec3 u_lights_position[ sceneNumLights ];
+uniform vec3 u_lights_origin[ sceneNumLights ];
 uniform vec3 u_lights_color[ sceneNumLights ];
-uniform int u_lights_intensity[ sceneNumLights ];
+uniform float u_lights_intensity[ sceneNumLights ];
 
 
 /* Defining Structs */
@@ -32,12 +32,6 @@ struct MaterialEntity {
     float diffuse;
     float specular;
     int shininess;
-};
-
-struct LightEntity {
-    vec3 origin;
-    vec3 color;
-    float intensity;
 };
 
 struct ObjectEntity {
@@ -63,12 +57,18 @@ struct Intersection {
     bool intersect;
     float distance;
     ObjectEntity object;
+    RayEntity ray;
     vec3 intersectionPoint;
+    vec3 normal;
 };
 
 
 
 /* Defining raytracing functions */
+
+vec3 sphereNormal(vec3 intersectPoint, ObjectEntity sphere) {
+    return normalize(intersectPoint - sphere.origin);
+}
 
 vec3 getIntersectPoint(RayEntity ray, float dist) {
     return ray.origin + ray.direction * dist;
@@ -85,7 +85,13 @@ Intersection doesIntersect(RayEntity ray, ObjectEntity object, float distance) {
     intersect.intersect = true;
     intersect.object = object;
     intersect.distance = distance;
+    intersect.ray = ray;
     intersect.intersectionPoint = getIntersectPoint(ray, distance);
+
+    if( intersect.object.objectType == PATH_OBJECT_SPHERE ) {
+        intersect.normal = sphereNormal(intersect.intersectionPoint, intersect.object);
+    }
+
     return intersect;
 }
 
@@ -118,16 +124,24 @@ Intersection sphereIntersect(RayEntity ray, ObjectEntity sphere) {
     return dontIntersect();
 }
 
-vec3 sphereNormal(vec3 intersectPoint, ObjectEntity sphere) {
-    return normalize(intersectPoint - sphere.origin);
-}
-
 
 
 /* Global Scene variables */
-
-LightEntity sceneLights[ sceneNumLights ];
 ObjectEntity sceneObjects[ 1 ]; 
+
+
+
+/* Global Scene calc functions (Lighting/Shading mainly) */
+
+vec3 getLightContribution(Intersection intersection) {
+    for(int i = 0; i < sceneNumLights; i++) {
+        vec3 o = u_lights_origin[i];
+        vec3 c = u_lights_color[i];
+        float intensity = u_lights_intensity[i];
+    }
+
+    return vec3(1.0, 1.0, 1.0);
+}
 
 
 
@@ -148,10 +162,6 @@ void main() {
     sceneObjects[0].material.diffuse = 0.8;
     sceneObjects[0].material.specular = 1.0;
     sceneObjects[0].material.shininess = 80;
-
-    sceneLights[0].origin = vec3(2.0, 2.0, 1.0);
-    sceneLights[0].color = vec3(1.0, 1.0, 1.0);
-    sceneLights[0].intensity = 1.0;
 
     camera.origin = vec3(0.0, 0.0, 0.0);
     camera.coordinateSystem[0] = vec3(1.0, 0.0, 0.0);
@@ -199,12 +209,11 @@ void main() {
 
     if( closestIntersection.intersect ) {
 
-        vec3 normal = sphereNormal(closestIntersection.intersectionPoint, closestIntersection.object);
+        vec3 color = getLightContribution(closestIntersection);
 
-        //float lightContribution = dot(normal,)
-        r = 1.0;
-        g = 1.0;
-        b = 1.0;
+        r = color.r;
+        g = color.g;
+        b = color.b;
     }
     
     gl_FragColor = vec4(r, g, b, 1.0);

@@ -19,7 +19,7 @@
 
         /* Main */
         $( function() {
-            
+
             $.THREEShaderHelper({
                 debug: true,
                 fragmentShaderFile: 'fragment-shader.c',
@@ -30,8 +30,8 @@
                     num_lights: 1
                 },
                 uniforms: {
-                    u_lights_position: { type: "v3v", value: [ 
-                        new THREE.Vector3( 1.0, 1.0, 1.0 ) 
+                    u_lights_origin: { type: "v3v", value: [ 
+                        new THREE.Vector3( 2.0, 2.0, 1.0 ) 
                     ] },
                     u_lights_color: { type: "v3v", value: [
                         new THREE.Vector3( 1.0, 1.0, 1.0 )
