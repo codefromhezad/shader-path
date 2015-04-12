@@ -20,7 +20,7 @@
         /* Main */
         $( function() {
 
-            var AMBIANT_COLOR = new THREE.Vector3(0.05, 0.05, 0.1);
+            var AMBIANT_COLOR = new THREE.Vector4(0.05, 0.05, 0.1, 1.0);
 
             $.THREEShaderHelper({
                 debug: true,
@@ -36,12 +36,12 @@
                     num_lights: 1
                 },
                 uniforms: {
-                    u_ambiant_color: { type: "v3", value: AMBIANT_COLOR },
+                    u_ambiant_color: { type: "v4", value: AMBIANT_COLOR },
                     u_lights_origin: { type: "v3v", value: [ 
                         new THREE.Vector3( 2.0, 1.5, -2.0 ) 
                     ] },
-                    u_lights_color: { type: "v3v", value: [
-                        new THREE.Vector3( 1.0, 1.0, 1.0 )
+                    u_lights_color: { type: "v4v", value: [
+                        new THREE.Vector4( 1.0, 1.0, 1.0, 1.0 )
                     ] },
                     u_lights_intensity: { type: "fv1", value: [ 
                         1.0

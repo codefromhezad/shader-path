@@ -20,17 +20,17 @@ const int sceneNumObjects = 1;
 
 uniform vec2 u_screen_size;
 uniform int u_frame_count;
-uniform vec3 u_ambiant_color;
+uniform vec4 u_ambiant_color;
 
 uniform vec3 u_lights_origin[ sceneNumLights ];
-uniform vec3 u_lights_color[ sceneNumLights ];
+uniform vec4 u_lights_color[ sceneNumLights ];
 uniform float u_lights_intensity[ sceneNumLights ];
 
 
 /* Defining Structs */
 
 struct MaterialEntity {
-    vec3 diffuseColor;
+    vec4 diffuseColor;
     float specular;
     float shininess;
 };
@@ -162,15 +162,15 @@ bool lightPositionIsVisibleFrom(RayEntity pointToLightRay) {
     return ! intersect.intersect;
 }
 
-vec3 getLightContribution(Intersection intersection) {
+vec4 getLightContributionColor(Intersection intersection) {
 
-    vec3 finalAmbiantColor = u_ambiant_color;
-    vec3 finalDiffuseColor = vec3(0.0, 0.0, 0.0);
-    vec3 finalSpecularColor = vec3(0.0, 0.0, 0.0);
+    vec4 finalAmbiantColor = u_ambiant_color;
+    vec4 finalDiffuseColor = vec4(0.0, 0.0, 0.0, 1.0);
+    vec4 finalSpecularColor = vec4(0.0, 0.0, 0.0, 1.0);
 
     for(int i = 0; i < sceneNumLights; i++) {
         vec3 o = u_lights_origin[i];
-        vec3 c = u_lights_color[i];
+        vec4 c = u_lights_color[i];
         float intensity = u_lights_intensity[i];
         
         vec3 adaptedIntersectionPoint = intersection.intersectionPoint + intersection.normal * PATH_FLOAT_EPSILON;
@@ -186,7 +186,7 @@ vec3 getLightContribution(Intersection intersection) {
             float diffuseFactor = clamp(dot(intersection.normal, pointToLightRay.direction), 0.0, 1.0);
 
             if( diffuseFactor > PATH_FLOAT_EPSILON ) {
-                vec3 diffuseColor = intensity * c * objectMaterial.diffuseColor * diffuseFactor;
+                vec4 diffuseColor = intensity * c * objectMaterial.diffuseColor * diffuseFactor;
                 diffuseColor.r = clamp(diffuseColor.r, 0.0, 1.0);
                 diffuseColor.g = clamp(diffuseColor.g, 0.0, 1.0);
                 diffuseColor.b = clamp(diffuseColor.b, 0.0, 1.0);
@@ -198,7 +198,7 @@ vec3 getLightContribution(Intersection intersection) {
             float specularFactor = clamp(dot( intersection.normal, lightReflect ), 0.0, 1.0);
 
             if( specularFactor > PATH_FLOAT_EPSILON ) {
-                vec3 specularColor = intensity * c * objectMaterial.specular * max(pow(specularFactor, objectMaterial.shininess), 0.0);
+                vec4 specularColor = intensity * c * objectMaterial.specular * max(pow(specularFactor, objectMaterial.shininess), 0.0);
                 specularColor.r = clamp(specularColor.r, 0.0, 1.0);
                 specularColor.g = clamp(specularColor.g, 0.0, 1.0);
                 specularColor.b = clamp(specularColor.b, 0.0, 1.0);
@@ -225,7 +225,7 @@ void main() {
     sceneObjects[0].objectType = PATH_OBJECT_SPHERE;
     sceneObjects[0].origin = vec3(0.0, 0.0, 2.0);
     sceneObjects[0].radius = 1.0;
-    sceneObjects[0].material.diffuseColor = vec3(0.9, 0.9, 1.0);
+    sceneObjects[0].material.diffuseColor = vec4(0.9, 0.9, 1.0, 1.0);
     sceneObjects[0].material.specular = 1.0;
     sceneObjects[0].material.shininess = 400.0;
 
@@ -254,20 +254,13 @@ void main() {
         dot(viewVector, camera.coordinateSystem[2])
     ));
 
-    float r = u_ambiant_color.r; 
-    float g = u_ambiant_color.g; 
-    float b = u_ambiant_color.b;
+    vec4 finalColor = u_ambiant_color;
 
     Intersection closestIntersection = getClosestIntersection(baseRay);
 
     if( closestIntersection.intersect ) {
-
-        vec3 color = getLightContribution(closestIntersection);
-
-        r = color.r;
-        g = color.g;
-        b = color.b;
+        finalColor = getLightContributionColor(closestIntersection);
     }
     
-    gl_FragColor = vec4(r, g, b, 1.0);
+    gl_FragColor = finalColor;
 }
