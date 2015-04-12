@@ -133,10 +133,38 @@ ObjectEntity sceneObjects[ 1 ];
 
 
 
+/* Polymorphic Object Intersection helper */
+
+Intersection getClosestIntersection(RayEntity ray) {
+    Intersection closestIntersection = dontIntersect();
+    closestIntersection.distance = PATH_INFINITY;
+
+    Intersection actualIntersection;
+    for(int i = 0; i < sceneNumObjects; i++) {
+        if( sceneObjects[i].objectType == PATH_OBJECT_SPHERE ) { 
+            actualIntersection = sphereIntersect(ray, sceneObjects[i]);
+        }
+
+        if( actualIntersection.intersect && actualIntersection.distance < closestIntersection.distance ) {
+            closestIntersection = actualIntersection;
+        }
+    }
+
+    return closestIntersection;
+}
+
+
+
 /* Global Scene calc functions (Lighting/Shading mainly) */
 
 bool lightPositionIsVisibleFrom(vec3 lightPos, vec3 point) {
-    return true;
+    RayEntity pointToLightRay;
+    pointToLightRay.origin = point;
+    pointToLightRay.direction = normalize(lightPos - point);
+
+    Intersection intersect = getClosestIntersection(pointToLightRay);
+
+    return ! intersect.intersect;
 }
 
 vec3 getLightContribution(Intersection intersection) {
@@ -151,8 +179,10 @@ vec3 getLightContribution(Intersection intersection) {
         vec3 o = u_lights_origin[i];
         vec3 c = u_lights_color[i];
         float intensity = u_lights_intensity[i];
+        
+        vec3 adaptedIntersectionPoint = intersection.intersectionPoint + intersection.normal * PATH_FLOAT_EPSILON;
 
-        if( lightPositionIsVisibleFrom(o, intersection.intersectionPoint) ) {
+        if( lightPositionIsVisibleFrom(o, adaptedIntersectionPoint) ) {
             finalColor.r += 0.2;
             finalColor.g += 0.2;
             finalColor.b += 0.2;
@@ -210,20 +240,7 @@ void main() {
     float g = u_ambiant_color.g; 
     float b = u_ambiant_color.b;
 
-    Intersection closestIntersection;
-    closestIntersection.distance = PATH_INFINITY;
-    closestIntersection.intersect = false;
-
-    Intersection actualIntersection;
-    for(int i = 0; i < sceneNumObjects; i++) {
-        if( sceneObjects[i].objectType == PATH_OBJECT_SPHERE ) {
-            actualIntersection = sphereIntersect(baseRay, sceneObjects[i]);
-        }
-
-        if( actualIntersection.intersect && actualIntersection.distance < closestIntersection.distance ) {
-            closestIntersection = actualIntersection;
-        }
-    }
+    Intersection closestIntersection = getClosestIntersection(baseRay);
 
     if( closestIntersection.intersect ) {
 
