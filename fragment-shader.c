@@ -2,11 +2,6 @@ uniform vec2 u_screenSize;
 uniform int u_frameCount;
 
 const float FLOAT_EPSILON = 0.0001;
-const float NO_INTERSECT = -1.0;
-
-float rand(vec2 co){
-    return fract(sin(dot(co.xy, vec2(12.9898,78.233))) * 43758.5453);
-}
 
 struct SphereEntity {
     vec3 origin;
@@ -25,7 +20,31 @@ struct CameraEntity {
     float nearClipPlaneDist;
 };
 
-float sphereIntersect(RayEntity ray, SphereEntity sphere) {
+struct Intersection {
+    bool intersect;
+    float distance;
+    vec3 intersectionPoint;
+};
+
+vec3 getIntersectPoint(RayEntity ray, float dist) {
+    return ray.origin + ray.direction * dist;
+}
+
+Intersection dontIntersect() {
+    Intersection intersect;
+    intersect.intersect = false;
+    return intersect;
+}
+
+Intersection doesIntersect(RayEntity ray, float distance) {
+    Intersection intersect;
+    intersect.intersect = true;
+    intersect.distance = distance;
+    intersect.intersectionPoint = getIntersectPoint(ray, distance);
+    return intersect;
+}
+
+Intersection sphereIntersect(RayEntity ray, SphereEntity sphere) {
     float A = dot(ray.direction, ray.direction);
     vec3 originToCenterRay = ray.origin - sphere.origin;
     float B = dot(originToCenterRay, ray.direction) * 2.0;
@@ -41,17 +60,17 @@ float sphereIntersect(RayEntity ray, SphereEntity sphere) {
         if(distance2 > FLOAT_EPSILON) {
             if(distance1 < FLOAT_EPSILON) {
                 if(distance2 < distance1) {
-                    return distance2;
+                    return doesIntersect(ray, distance2);
                 }
             } else {
                 if(distance1 < distance2) {
-                    return distance1;
+                    return doesIntersect(ray, distance1);
                 }
             }
         }
     }
 
-    return NO_INTERSECT;
+    return dontIntersect();
 }
 
 vec3 sphereNormal(vec3 intersectPoint, SphereEntity sphere) {
@@ -68,8 +87,8 @@ void main() {
 
     /* Those settings and calculations should be done only once
        and not for each pixel. They should be out of main() but how ? */
-    sphere.origin = vec3(0.0, 2.0, 2.0);
-    sphere.radius = 20.0;
+    sphere.origin = vec3(0.0, 0.0, 2.0);
+    sphere.radius = 1.0;
 
     camera.origin = vec3(0.0, 0.0, 0.0);
     camera.coordinateSystem[0] = vec3(1.0, 0.0, 0.0);
@@ -96,20 +115,20 @@ void main() {
         dot(viewVector, camera.coordinateSystem[2])
     ));
 
-    float noiseValue = rand(vec2(
-        dot(
-            vec2(1.0, 1.0),
-            vec2(baseRay.direction.x + float(u_frameCount) * 0.001, baseRay.direction.y)
-        ),
-        dot(
-            vec2(1.0, 1.0),
-            vec2(baseRay.direction.y + float(u_frameCount) * 0.001, baseRay.direction.x)
-        )
-    ));
+    float r = 0.0;
+    float g = 0.0;
+    float b = 0.0;
 
-    float r = noiseValue;
-    float g = noiseValue;
-    float b = noiseValue;
+    Intersection actualIntersection = sphereIntersect(baseRay, sphere);
+
+    if( actualIntersection.intersect ) {
+
+        vec3 normal = sphereNormal(actualIntersection.intersectionPoint, sphere);
+
+        r = 1.0;
+        g = 1.0;
+        b = 1.0;
+    }
     
     gl_FragColor = vec4(r, g, b, 1.0);
 }
