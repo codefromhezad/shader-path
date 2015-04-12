@@ -75,7 +75,7 @@ void main() {
         dot(viewVector, camera.coordinateSystem[2])
     ));
 
-    vec4 finalColor = u_ambiant_color;
+    vec4 finalColor = vec4(0.0, 0.0, 0.0, 1.0);
 
     Intersection closestIntersection = getClosestIntersection(baseRay);
 
