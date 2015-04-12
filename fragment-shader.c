@@ -3,19 +3,13 @@
 
 /* Defining constants */
 
-#define PATH_MAX_LIGHTS 10
-#define PATH_MAX_OBJECTS 10
-
-#define PATH_FLOAT_EPSILON 0.0001
-#define PATH_INFINITY 9999999.0
-
-#define PATH_OBJECT_SPHERE 1
+{{ js_include: defines }}
 
 
 
 /* Defining uniforms */
 
-const int sceneNumLights = {{js:num_lights}};
+const int sceneNumLights = {{ js: num_lights }};
 const int sceneNumObjects = 1;
 
 uniform vec2 u_screen_size;
@@ -30,7 +24,7 @@ uniform float u_lights_intensity[ sceneNumLights ];
 
 /* Defining Structs */
 
-{{js_include:structs}}
+{{ js_include: structs }}
 
 
 
