@@ -1,5 +1,5 @@
 const int sceneNumLights = {{ var num_lights }};
-const int sceneNumObjects = 1;
+const int sceneNumObjects = 2;
 
 uniform vec2 u_screen_size;
 uniform int u_frame_count;
@@ -34,8 +34,6 @@ RayEntity baseRay;
 
 void main() {
 
-    /* Those settings and calculations should be done only once
-       and not for each pixel. They should be out of main() but how ? */
     sceneObjects[0].objectType = PATH_OBJECT_SPHERE;
     sceneObjects[0].origin = vec3(0.0, 100.0, 400.0);
     sceneObjects[0].radius = 150.0;
@@ -50,7 +48,7 @@ void main() {
     sceneObjects[1].material.specular = 1.0;
     sceneObjects[1].material.shininess = 80.0;
 
-    camera.origin = vec3(0.0, 0.0, 0.0);
+    camera.origin = vec3(0.0, 200.0, 0.0);
     camera.coordinateSystem[0] = vec3(1.0, 0.0, 0.0);
     camera.coordinateSystem[1] = vec3(0.0, 1.0, 0.0);
     camera.coordinateSystem[2] = vec3(0.0, 0.0, 1.0);

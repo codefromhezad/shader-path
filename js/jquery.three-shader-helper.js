@@ -13,6 +13,7 @@ var PLUGIN_NAME = 'THREEShaderHelper';
             fragmentShaderContents: 'void main() { gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0); }',
             canvasSize:     { w: 400, h: 400 },
             canvasContainer: 'body',
+            animate: true,
             uniforms: {},
             shaderInject: {},
             shaderIncludeFiles: {},
@@ -130,18 +131,26 @@ var PLUGIN_NAME = 'THREEShaderHelper';
             threeRenderer.setSize( opts.canvasSize.w, opts.canvasSize.h );
 
             var renderFrame = function() {
-
                 threeRenderer.render( threeScene, threeCamera );
+            }
+
+            var renderFrameAnimate = function() {
+                renderFrame();
+
                 screenPlaneMesh.material.uniforms.u_frame_count.value += 1;
                 
                 if( opts.onFrame ) {
                     opts.onFrame(screenPlaneMesh.material.uniforms);
                 }
 
-                window.requestAnimationFrame(renderFrame);
+                window.requestAnimationFrame(renderFrameAnimate);
             }
 
-            window.requestAnimationFrame(renderFrame);
+            if( opts.animate ) {
+                window.requestAnimationFrame(renderFrameAnimate);
+            } else {
+                renderFrame();
+            }
         }
 
         /* Shader files loading with jquery Ajax helpers */

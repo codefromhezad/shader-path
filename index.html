@@ -28,10 +28,7 @@
                 canvasSize:         {w: 600, h: 600},
                 canvasContainer:    '#container',
                 onSceneInit: function() { $('.loading').remove(); },
-                onFrame: function(uniforms) {
-                    uniforms.u_lights_origin.value[0].x = 200 * Math.cos(uniforms.u_frame_count.value / 40.0);
-                    uniforms.u_lights_origin.value[0].z = 400 + 200 * Math.sin(uniforms.u_frame_count.value / 40.0);
-                },
+                animate: false,
                 shaderInject: {
                     num_lights: 2
                 },
@@ -46,8 +43,8 @@
                 uniforms: {
                     u_ambiant_color: { type: "v4", value: AMBIANT_COLOR },
                     u_lights_origin: { type: "v3v", value: [ 
-                        new THREE.Vector3( 0.0, 150.0, 400.0 ), 
-                        new THREE.Vector3( 350.0, - 300.0, 20.0 )
+                        new THREE.Vector3( - 300.0, 300.0, 100.0 ), 
+                        new THREE.Vector3( 350.0, 300.0, 20.0 )
                     ] },
                     u_lights_color: { type: "v4v", value: [
                         new THREE.Vector4( 1.0, 1.0, 1.0, 1.0 ),
