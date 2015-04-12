@@ -13,9 +13,10 @@ var PLUGIN_NAME = 'THREEShaderHelper';
             fragmentShaderContents: 'void main() { gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0); }',
             canvasSize:     { w: 400, h: 400 },
             canvasContainer: 'body',
-            onSceneInit: null,
             uniforms: {},
-            shaderInject: {}
+            shaderInject: {},
+            onSceneInit: null,
+            onFrame: null
         }
         var opts = $.extend(defaults, opts);
 
@@ -110,6 +111,14 @@ var PLUGIN_NAME = 'THREEShaderHelper';
                 threeRenderer.render( threeScene, threeCamera );
                 screenPlaneMesh.material.uniforms.u_frame_count.value += 1;
                 
+                if( opts.onFrame ) {
+                    var uniformsUpdate = opts.onFrame(screenPlaneMesh.material.uniforms);
+
+                    if( uniformsUpdate ) {
+                        screenPlaneMesh.material.uniforms = uniformsUpdate;
+                    }
+                }
+
                 window.requestAnimationFrame(renderFrame);
             }
 

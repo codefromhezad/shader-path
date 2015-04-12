@@ -30,8 +30,7 @@ uniform float u_lights_intensity[ sceneNumLights ];
 /* Defining Structs */
 
 struct MaterialEntity {
-    vec3 baseColor;
-    float diffuse;
+    vec3 diffuseColor;
     float specular;
     int shininess;
 };
@@ -165,11 +164,9 @@ bool lightPositionIsVisibleFrom(RayEntity pointToLightRay) {
 
 vec3 getLightContribution(Intersection intersection) {
 
-    vec3 ambiantColor = u_ambiant_color;
-    vec3 diffuseColor = vec3(0.0, 0.0, 0.0);
-    vec3 specularColor = vec3(0.0, 0.0, 0.0);
-
-    vec3 finalColor = ambiantColor;
+    vec3 finalAmbiantColor = u_ambiant_color;
+    vec3 finalDiffuseColor = vec3(0.0, 0.0, 0.0);
+    vec3 finalSpecularColor = vec3(0.0, 0.0, 0.0);
 
     for(int i = 0; i < sceneNumLights; i++) {
         vec3 o = u_lights_origin[i];
@@ -183,13 +180,25 @@ vec3 getLightContribution(Intersection intersection) {
         pointToLightRay.direction = normalize(o - adaptedIntersectionPoint);
 
         if( lightPositionIsVisibleFrom(pointToLightRay) ) {
-            finalColor.r += 0.2;
-            finalColor.g += 0.2;
-            finalColor.b += 0.2;
+
+            MaterialEntity objectMaterial = intersection.object.material;
+
+            float diffuseFactor = dot(intersection.normal, pointToLightRay.direction);
+
+            if( diffuseFactor > PATH_FLOAT_EPSILON ) {
+                finalDiffuseColor += c * objectMaterial.diffuseColor * diffuseFactor;
+            }
+
+            vec3 lightReflect = reflect(-pointToLightRay.direction, intersection.normal);
+            float specularFactor = dot( intersection.normal, lightReflect );
+
+            if( specularFactor > PATH_FLOAT_EPSILON ) {
+                finalSpecularColor += c * objectMaterial.specular * pow(specularFactor, float(objectMaterial.shininess));
+            }
         }
     }
 
-    return finalColor;
+    return finalAmbiantColor + finalDiffuseColor + finalSpecularColor;
 }
 
 
@@ -206,10 +215,9 @@ void main() {
     sceneObjects[0].objectType = PATH_OBJECT_SPHERE;
     sceneObjects[0].origin = vec3(0.0, 0.0, 2.0);
     sceneObjects[0].radius = 1.0;
-    sceneObjects[0].material.baseColor = vec3(0.8, 0.8, 1.0);
-    sceneObjects[0].material.diffuse = 0.8;
+    sceneObjects[0].material.diffuseColor = vec3(0.9, 0.9, 1.0);
     sceneObjects[0].material.specular = 1.0;
-    sceneObjects[0].material.shininess = 80;
+    sceneObjects[0].material.shininess = 400;
 
     camera.origin = vec3(0.0, 0.0, 0.0);
     camera.coordinateSystem[0] = vec3(1.0, 0.0, 0.0);
