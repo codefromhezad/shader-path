@@ -32,7 +32,7 @@ uniform float u_lights_intensity[ sceneNumLights ];
 struct MaterialEntity {
     vec3 diffuseColor;
     float specular;
-    int shininess;
+    float shininess;
 };
 
 struct ObjectEntity {
@@ -198,7 +198,7 @@ vec3 getLightContribution(Intersection intersection) {
             float specularFactor = clamp(dot( intersection.normal, lightReflect ), 0.0, 1.0);
 
             if( specularFactor > PATH_FLOAT_EPSILON ) {
-                vec3 specularColor = intensity * c * objectMaterial.specular * max(pow(specularFactor, float(objectMaterial.shininess)), 0.0);
+                vec3 specularColor = intensity * c * objectMaterial.specular * max(pow(specularFactor, objectMaterial.shininess), 0.0);
                 specularColor.r = clamp(specularColor.r, 0.0, 1.0);
                 specularColor.g = clamp(specularColor.g, 0.0, 1.0);
                 specularColor.b = clamp(specularColor.b, 0.0, 1.0);
@@ -227,7 +227,7 @@ void main() {
     sceneObjects[0].radius = 1.0;
     sceneObjects[0].material.diffuseColor = vec3(0.9, 0.9, 1.0);
     sceneObjects[0].material.specular = 1.0;
-    sceneObjects[0].material.shininess = 400;
+    sceneObjects[0].material.shininess = 400.0;
 
     camera.origin = vec3(0.0, 0.0, 0.0);
     camera.coordinateSystem[0] = vec3(1.0, 0.0, 0.0);
