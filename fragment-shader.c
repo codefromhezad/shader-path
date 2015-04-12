@@ -1,5 +1,5 @@
 const int sceneNumLights = {{ var num_lights }};
-const int sceneNumObjects = 2;
+const int sceneNumObjects = 3;
 
 uniform vec2 u_screen_size;
 uniform int u_frame_count;
@@ -19,7 +19,7 @@ uniform float u_lights_intensity[ sceneNumLights ];
 
 
 
-ObjectEntity sceneObjects[ 2 ]; 
+ObjectEntity sceneObjects[ 3 ]; 
 
 
 
@@ -35,18 +35,25 @@ RayEntity baseRay;
 void main() {
 
     sceneObjects[0].objectType = PATH_OBJECT_SPHERE;
-    sceneObjects[0].origin = vec3(0.0, 100.0, 400.0);
+    sceneObjects[0].origin = vec3(-200.0, 100.0, 400.0);
     sceneObjects[0].radius = 150.0;
     sceneObjects[0].material.diffuseColor = vec4(0.9, 0.9, 1.0, 1.0);
     sceneObjects[0].material.specular = 1.0;
     sceneObjects[0].material.shininess = 100.0;
 
-    sceneObjects[1].objectType = PATH_OBJECT_PLANE;
-    sceneObjects[1].origin = vec3(0.0, -50.0, 100.0);
-    sceneObjects[1].normal = vec3(0.0, 1.0, 0.0);
-    sceneObjects[1].material.diffuseColor = vec4(1.0, 0.9, 0.9, 1.0);
+    sceneObjects[1].objectType = PATH_OBJECT_SPHERE;
+    sceneObjects[1].origin = vec3(200.0, 100.0, 400.0);
+    sceneObjects[1].radius = 150.0;
+    sceneObjects[1].material.diffuseColor = vec4(0.9, 0.9, 1.0, 1.0);
     sceneObjects[1].material.specular = 1.0;
-    sceneObjects[1].material.shininess = 80.0;
+    sceneObjects[1].material.shininess = 100.0;
+
+    sceneObjects[2].objectType = PATH_OBJECT_PLANE;
+    sceneObjects[2].origin = vec3(0.0, -50.0, 100.0);
+    sceneObjects[2].normal = vec3(0.0, 1.0, 0.0);
+    sceneObjects[2].material.diffuseColor = vec4(1.0, 0.9, 0.9, 1.0);
+    sceneObjects[2].material.specular = 1.0;
+    sceneObjects[2].material.shininess = 80.0;
 
     camera.origin = vec3(0.0, 200.0, 0.0);
     camera.coordinateSystem[0] = vec3(1.0, 0.0, 0.0);
