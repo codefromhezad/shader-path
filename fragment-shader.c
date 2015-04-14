@@ -1,5 +1,5 @@
 const int sceneNumLights = {{ var num_lights }};
-const int sceneNumObjects = 3;
+const int sceneNumObjects = {{ var num_objects }};
 
 {{ include defines }}
 {{ include structs }}

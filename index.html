@@ -12,7 +12,6 @@
     <script src="js/libs/three.min.js"></script>
     <script src="js/libs/jquery.js"></script>
     <script src="js/libs/helpers.min.js"></script>
-    
     <script src="js/jquery.three-shader-helper.js"></script>
 
     <script>
@@ -22,6 +21,10 @@
 
             var AMBIANT_COLOR = new THREE.Vector3(0.08, 0.05, 0.0);
 
+            // function recursiveUniform(inputObj) {
+            //     finalObj
+            // }
+
             $.THREEShaderHelper({
                 debug: true,
                 fragmentShaderFile: 'fragment-shader.c',
@@ -30,7 +33,8 @@
                 onSceneInit: function() { $('.loading').remove(); },
                 animate: false,
                 shaderInject: {
-                    num_lights: 2
+                    num_lights: 2,
+                    num_objects: 3
                 },
                 shaderIncludeFiles: {
                     'structs':      'structs.c',

@@ -23,21 +23,21 @@ var PLUGIN_NAME = 'THREEShaderHelper';
         }
         var opts = $.extend(defaults, opts);
 
-        logger.isActive = opts.debug;
-        logger.domainPadLength = 10;
+        H.logger.isActive = opts.debug;
+        H.logger.domainPadLength = 10;
 
 
         /* Initial shaders to load debug logs */
         if( opts.vertexShaderFile ) {
-            logger.as('Init').info('Loading vertex shader file ...');
+            H.logger.as('Init').info('Loading vertex shader file ...');
         } else {
-            logger.as('Init').info('Using default vertex shader.');
+            H.logger.as('Init').info('Using default vertex shader.');
         }
 
         if( opts.fragmentShaderFile ) {
-            logger.as('Init').info('Loading fragment shader file ...');
+            H.logger.as('Init').info('Loading fragment shader file ...');
         } else {
-            logger.as('Init').info('Using default fragment shader.');
+            H.logger.as('Init').info('Using default fragment shader.');
         }
 
 
@@ -56,7 +56,7 @@ var PLUGIN_NAME = 'THREEShaderHelper';
 
         shaderUniforms = $.extend(shaderUniforms, opts.uniforms);
 
-        logger.as('Init').info('Declared uniforms', shaderUniforms);
+        H.logger.as('Init').info('Declared uniforms', shaderUniforms);
 
         threeCamera.position.z = 1;
         threeRenderer.setPixelRatio( window.devicePixelRatio );
@@ -68,13 +68,13 @@ var PLUGIN_NAME = 'THREEShaderHelper';
         if( opts.vertexShaderFile ) {
             listOfDeferredLoaders.push( $.get(opts.vertexShaderFile, function(data) { 
                 opts.vertexShaderContents = data; 
-                logger.as('Init').info('Vertex shader file loaded.');
+                H.logger.as('Init').info('Vertex shader file loaded.');
             }) );
         }
         if( opts.fragmentShaderFile ) {
             listOfDeferredLoaders.push( $.get(opts.fragmentShaderFile, function(data) { 
                 opts.fragmentShaderContents = data; 
-                logger.as('Init').info('Fragment shader file loaded.');
+                H.logger.as('Init').info('Fragment shader file loaded.');
             }) );
         }
         if( opts.shaderIncludeFiles ) {
@@ -94,7 +94,7 @@ var PLUGIN_NAME = 'THREEShaderHelper';
         var renderMain = function() {
 
             if( opts.shaderIncludeContents ) {
-                logger.as('Parser').info('Injected includes', opts.shaderIncludeFiles);
+                H.logger.as('Parser').info('Injected includes', opts.shaderIncludeFiles);
                 for( var includeName in opts.shaderIncludeContents ) {
                     var includeRegexp = new RegExp("\{\{ *include +"+includeName+" *\}\}", 'g');
                     opts.vertexShaderContents = opts.vertexShaderContents.replace(includeRegexp, opts.shaderIncludeContents[includeName]);
@@ -103,7 +103,7 @@ var PLUGIN_NAME = 'THREEShaderHelper';
             }
 
             if( opts.shaderInject ) {
-                logger.as('Parser').info('Injected variables', opts.shaderInject);
+                H.logger.as('Parser').info('Injected variables', opts.shaderInject);
                 for( var varName in opts.shaderInject ) {
                     var injectorRegexp = new RegExp("\{\{ *var +"+varName+" *\}\}", 'g');
                     opts.vertexShaderContents = opts.vertexShaderContents.replace(injectorRegexp, opts.shaderInject[varName]);
