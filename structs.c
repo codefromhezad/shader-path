@@ -1,19 +1,21 @@
 
+struct MaterialEntity {
+    vec3 diffuseColor;
+    float specular;
+    float shininess;
+    float reflection;
+};
+
 struct ObjectEntity {
     int objectType;
     vec3 origin;
-    
+    MaterialEntity material;
+
     // For spheres
     float radius;
 
     // For planes
     vec3 normal;
-
-    // Material
-    vec3 diffuseColor;
-    float specular;
-    float shininess;
-    float reflection;
 };
 
 struct LightEntity {
