@@ -37,26 +37,26 @@ void main() {
     sceneObjects[0].objectType = PATH_OBJECT_SPHERE;
     sceneObjects[0].origin = vec3(-200.0, 100.0, 400.0);
     sceneObjects[0].radius = 150.0;
-    sceneObjects[0].material.diffuseColor = vec3(0.9, 0.9, 1.0);
-    sceneObjects[0].material.specular = 1.0;
-    sceneObjects[0].material.shininess = 100.0;
-    sceneObjects[0].material.reflection = 1.0;
+    sceneObjects[0].diffuseColor = vec3(0.9, 0.9, 1.0);
+    sceneObjects[0].specular = 1.0;
+    sceneObjects[0].shininess = 100.0;
+    sceneObjects[0].reflection = 1.0;
 
     sceneObjects[1].objectType = PATH_OBJECT_SPHERE;
     sceneObjects[1].origin = vec3(200.0, 100.0, 400.0);
     sceneObjects[1].radius = 150.0;
-    sceneObjects[1].material.diffuseColor = vec3(0.9, 1.0, 0.9);
-    sceneObjects[1].material.specular = 1.0;
-    sceneObjects[1].material.shininess = 100.0;
-    sceneObjects[1].material.reflection = 0.4;
+    sceneObjects[1].diffuseColor = vec3(0.9, 1.0, 0.9);
+    sceneObjects[1].specular = 1.0;
+    sceneObjects[1].shininess = 100.0;
+    sceneObjects[1].reflection = 0.4;
 
     sceneObjects[2].objectType = PATH_OBJECT_PLANE;
     sceneObjects[2].origin = vec3(0.0, -50.0, 100.0);
     sceneObjects[2].normal = vec3(0.0, 1.0, 0.0);
-    sceneObjects[2].material.diffuseColor = vec3(1.0, 0.5, 0.5);
-    sceneObjects[2].material.specular = 1.0;
-    sceneObjects[2].material.shininess = 80.0;
-    sceneObjects[2].material.reflection = 0.0;
+    sceneObjects[2].diffuseColor = vec3(1.0, 0.5, 0.5);
+    sceneObjects[2].specular = 1.0;
+    sceneObjects[2].shininess = 80.0;
+    sceneObjects[2].reflection = 0.0;
 
     camera.origin = vec3(0.0, 200.0, 0.0);
     camera.coordinateSystem[0] = vec3(1.0, 0.0, 0.0);
@@ -91,8 +91,8 @@ void main() {
         if( closestIntersection.intersect ) {
             vec3 currentColor = getLightContributionColor(closestIntersection);
 
-            float reflection = closestIntersection.object.material.reflection;
-            finalColor += (1.0 - reflection) * currentColor;
+            float reflection = closestIntersection.object.reflection;
+            finalColor = finalColor + (1.0 - reflection) * currentColor;
 
             if( reflection > PATH_FLOAT_EPSILON ) {
                 vec3 intersectionNormal = getNormal(closestIntersection);
