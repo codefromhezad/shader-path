@@ -1,5 +1,5 @@
 struct MaterialEntity {
-    vec4 diffuseColor;
+    vec3 diffuseColor;
     float specular;
     float shininess;
     float reflection;

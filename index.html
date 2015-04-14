@@ -20,7 +20,7 @@
         /* Main */
         $( function() {
 
-            var AMBIANT_COLOR = new THREE.Vector4(0.08, 0.05, 0.0, 1.0);
+            var AMBIANT_COLOR = new THREE.Vector3(0.08, 0.05, 0.0);
 
             $.THREEShaderHelper({
                 debug: true,
@@ -41,14 +41,14 @@
                     'obj-plane-functions':   'obj-plane-functions.c',
                 },
                 uniforms: {
-                    u_ambiant_color: { type: "v4", value: AMBIANT_COLOR },
+                    u_ambiant_color: { type: "v3", value: AMBIANT_COLOR },
                     u_lights_origin: { type: "v3v", value: [ 
                         new THREE.Vector3( - 300.0, 300.0, 100.0 ), 
                         new THREE.Vector3( 350.0, 300.0, 20.0 )
                     ] },
-                    u_lights_color: { type: "v4v", value: [
-                        new THREE.Vector4( 1.0, 1.0, 1.0, 1.0 ),
-                        new THREE.Vector4( 1.0, 0.8, 0.8, 1.0 )
+                    u_lights_color: { type: "v3v", value: [
+                        new THREE.Vector3( 1.0, 1.0, 1.0 ),
+                        new THREE.Vector3( 1.0, 0.8, 0.8 )
                     ] },
                     u_lights_intensity: { type: "fv1", value: [ 
                         1.0,
