@@ -45,7 +45,7 @@ void main() {
     sceneObjects[1].objectType = PATH_OBJECT_SPHERE;
     sceneObjects[1].origin = vec3(200.0, 100.0, 400.0);
     sceneObjects[1].radius = 150.0;
-    sceneObjects[1].material.diffuseColor = vec3(0.9, 0.9, 1.0);
+    sceneObjects[1].material.diffuseColor = vec3(0.9, 1.0, 0.9);
     sceneObjects[1].material.specular = 1.0;
     sceneObjects[1].material.shininess = 100.0;
     sceneObjects[1].material.reflection = 0.4;
@@ -63,7 +63,7 @@ void main() {
     camera.coordinateSystem[1] = vec3(0.0, 1.0, 0.0);
     camera.coordinateSystem[2] = vec3(0.0, 0.0, 1.0);
     camera.fov.x = 90.0;
-    camera.fov.y = camera.fov.x / (u_screen_size.x / u_screen_size.y);
+    camera.fov.y = u_screen_size.y * camera.fov.x / u_screen_size.x;
     camera.nearClipPlaneDist = 1.0;
     /* ---------------------------------------------------- */
 
@@ -72,8 +72,8 @@ void main() {
     homogenousPixelPosition.y = 2.0 * float(gl_FragCoord.y) / u_screen_size.y - 1.0;
 
     vec3 viewVector;
-    viewVector.x = camera.nearClipPlaneDist * homogenousPixelPosition.x * tan(camera.fov.x / 2.0);
-    viewVector.y = camera.nearClipPlaneDist * homogenousPixelPosition.y * tan(camera.fov.y / 2.0);
+    viewVector.x = camera.nearClipPlaneDist * homogenousPixelPosition.x * tan(camera.fov.x * 0.5);
+    viewVector.y = camera.nearClipPlaneDist * homogenousPixelPosition.y * tan(camera.fov.y * 0.5);
     viewVector.z = 1.0;
 
     baseRay.origin = camera.origin;
