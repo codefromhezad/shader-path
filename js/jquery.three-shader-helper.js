@@ -2,6 +2,69 @@ var PLUGIN_NAME = 'THREEShaderHelper';
 
 ( function($) {
 
+    /* buildSerializedUniformsObject:
+     * Shader helper function. Recursively transforms regular JS array/objects to an object containing
+     * serialized values in an object, ready to be passed to the shader.
+    */
+
+    var buildSerializeUniformsObject = function(uniformName, uniformValue) {
+        var serializedUniformFinalValue = {};
+        var MAX_RECURSION = 5;
+
+        var serializeUniformObjectInner = function(objPath, objValue, recursive_depth) {
+            if( recursive_depth === undefined ) {
+                recursive_depth = 0;
+            }
+
+            if( recursive_depth >= MAX_RECURSION ) {
+                H.logger.error('To much recursion while serializing uniform object.');
+                return false;
+            }
+
+            if( H.isArray(objValue) ) {
+
+                for(var i = 0; i < objValue.length; i++) {
+                    var ret = serializeUniformObjectInner(objPath + '[' + i + ']', objValue[i], recursive_depth +1);
+                    if( ! ret ) {
+                        return false;
+                    }
+                }
+
+            } else if( H.isObject(objValue) ) {
+
+                if( objValue.type !== undefined && objValue.value !== undefined ) {
+                    serializedUniformFinalValue[objPath] = objValue;
+                    return true;
+                } else {
+                    for(var i in objValue) {
+                        var ret;
+                        
+                        if( objValue.hasOwnProperty(i) ) {
+                            ret = serializeUniformObjectInner(objPath + '.' + i, objValue[i], recursive_depth + 1);
+                        }
+
+                        if( ! ret ) {
+                            return false;
+                        }
+                    }
+                }
+
+            } else {
+
+                H.logger.error('Error while serializing uniform ' + uniformName);
+
+                return false;;
+            }
+
+            return true;
+        }
+
+        serializeUniformObjectInner(uniformName, uniformValue);
+
+        return serializedUniformFinalValue;
+    };
+
+
     $[PLUGIN_NAME] = function(opts) {
 
         /* Options / Settings handling */
@@ -46,15 +109,21 @@ var PLUGIN_NAME = 'THREEShaderHelper';
             threeScene    = new THREE.Scene(), 
             threeRenderer = new THREE.WebGLRenderer(),
             screenPlane   = new THREE.PlaneBufferGeometry( 2, 2 );
-
-        window.exposedRenderer = threeRenderer;
         
-        var shaderUniforms = {
-            u_screen_size:  { type: "v2", value: new THREE.Vector2(opts.canvasSize.w, opts.canvasSize.h) },
-            u_frame_count: { type: "i", value: 0 }
-        };
+        var tempShaderUniforms = $.extend(
+            {
+                u_screen_size:  { type: "v2", value: new THREE.Vector2(opts.canvasSize.w, opts.canvasSize.h) },
+                u_frame_count: { type: "i", value: 0 }
+            },
+            opts.uniforms
+        );
 
-        shaderUniforms = $.extend(shaderUniforms, opts.uniforms);
+        var parsedUniforms = {};
+        for(var uniform_name in tempShaderUniforms) {
+            parsedUniforms = $.extend(parsedUniforms, buildSerializeUniformsObject(uniform_name, tempShaderUniforms[uniform_name]));
+        }
+
+        var shaderUniforms = parsedUniforms;
 
         H.logger.as('Init').info('Declared uniforms', shaderUniforms);
 

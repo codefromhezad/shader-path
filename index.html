@@ -19,11 +19,7 @@
         /* Main */
         $( function() {
 
-            var AMBIANT_COLOR = new THREE.Vector3(0.08, 0.05, 0.0);
-
-            // function recursiveUniform(inputObj) {
-            //     finalObj
-            // }
+            AMBIANT_COLOR = new THREE.Vector3(0.08, 0.05, 0.0);
 
             $.THREEShaderHelper({
                 debug: true,
@@ -46,14 +42,18 @@
                 },
                 uniforms: {
                     u_ambiant_color: { type: "v3", value: AMBIANT_COLOR },
-
-                    "u_lights[0].origin": { type: "v3", value: new THREE.Vector3( - 300.0, 300.0, 100.0 ) },
-                    "u_lights[0].color": { type: "v3", value: new THREE.Vector3( 1.0, 1.0, 1.0 ) },
-                    "u_lights[0].intensity": { type: "f", value: 1.0 },
-
-                    "u_lights[1].origin": { type: "v3", value: new THREE.Vector3( 350.0, 300.0, 20.0 ) },
-                    "u_lights[1].color": { type: "v3", value: new THREE.Vector3( 1.0, 0.8, 0.8 ) },
-                    "u_lights[1].intensity": { type: "f", value: 0.5 },
+                    u_lights: [
+                        {
+                            origin: { type: "v3", value: new THREE.Vector3( - 300.0, 300.0, 100.0 ) },
+                            color: { type: "v3", value: new THREE.Vector3( 1.0, 1.0, 1.0 ) },
+                            intensity: { type: "f", value: 1.0 }
+                        },
+                        {
+                            origin: { type: "v3", value: new THREE.Vector3( 350.0, 300.0, 20.0 ) },
+                            color: { type: "v3", value: new THREE.Vector3( 1.0, 0.8, 0.8 ) },
+                            intensity: { type: "f", value: 0.5 }
+                        }
+                    ]
                 }
             });
                         
