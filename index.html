@@ -16,10 +16,55 @@
 
     <script>
 
+        /* These constants are defined in the file defines.c
+            They MUST match the values used in this file.
+        */
+        var PATH_OBJECT_SPHERE = 1;
+        var PATH_OBJECT_PLANE = 2;
+
+
         /* Main */
         $( function() {
 
-            AMBIANT_COLOR = new THREE.Vector3(0.08, 0.05, 0.0);
+            var AMBIANT_COLOR = new THREE.Vector3(0.08, 0.05, 0.0);
+
+            var sceneLights = [
+                {
+                    origin: { type: "v3", value: new THREE.Vector3( - 300.0, 300.0, 100.0 ) },
+                    color: { type: "v3", value: new THREE.Vector3( 1.0, 1.0, 1.0 ) },
+                    intensity: { type: "f", value: 1.0 }
+                },
+                {
+                    origin: { type: "v3", value: new THREE.Vector3( 350.0, 300.0, 20.0 ) },
+                    color: { type: "v3", value: new THREE.Vector3( 1.0, 0.8, 0.8 ) },
+                    intensity: { type: "f", value: 0.5 }
+                }
+            ];
+
+            var sceneObjects = [
+                {
+                    objectType: { type: "i", value: PATH_OBJECT_SPHERE },
+                    origin: { type: "v3", value: new THREE.Vector3(-200.0, 100.0, 400.0) },
+                    radius: { type: "f", value: 150.0 },
+                    material: {
+                        diffuseColor: { type: "v3", value: new THREE.Vector3(0.9, 0.9, 1.0) },
+                        specular: { type: "f", value: 1.0 },
+                        shininess: { type: "f", value: 100.0 },
+                        reflection: { type: "f", value: 1.0 }
+                    }
+                },
+                {
+                    objectType: { type: "i", value: PATH_OBJECT_PLANE },
+                    origin: { type: "v3", value: new THREE.Vector3(0.0, -50.0, 100.0) },
+                    normal: { type: "v3", value: new THREE.Vector3(0.0, 1.0, 0.0) },
+                    material: {
+                        diffuseColor: { type: "v3", value: new THREE.Vector3(1.0, 0.5, 0.5) },
+                        specular: { type: "f", value: 1.0 },
+                        shininess: { type: "f", value: 80.0 },
+                        reflection: { type: "f", value: 0.0 }
+                    }
+                },
+            ];
 
             $.THREEShaderHelper({
                 debug: true,
@@ -30,7 +75,7 @@
                 animate: false,
                 shaderInject: {
                     num_lights: 2,
-                    num_objects: 3
+                    num_objects: 2
                 },
                 shaderIncludeFiles: {
                     'structs':      'structs.c',
@@ -42,18 +87,8 @@
                 },
                 uniforms: {
                     u_ambiant_color: { type: "v3", value: AMBIANT_COLOR },
-                    u_lights: [
-                        {
-                            origin: { type: "v3", value: new THREE.Vector3( - 300.0, 300.0, 100.0 ) },
-                            color: { type: "v3", value: new THREE.Vector3( 1.0, 1.0, 1.0 ) },
-                            intensity: { type: "f", value: 1.0 }
-                        },
-                        {
-                            origin: { type: "v3", value: new THREE.Vector3( 350.0, 300.0, 20.0 ) },
-                            color: { type: "v3", value: new THREE.Vector3( 1.0, 0.8, 0.8 ) },
-                            intensity: { type: "f", value: 0.5 }
-                        }
-                    ]
+                    u_lights: sceneLights,
+                    u_objects: sceneObjects
                 },
             });
                         

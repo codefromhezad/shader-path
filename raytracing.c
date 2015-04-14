@@ -1,4 +1,4 @@
-Intersection getClosestIntersection(RayEntity ray) {
+Intersection getClosestIntersection(RayEntity ray, ObjectEntity sceneObjects[sceneNumObjects]) {
     Intersection closestIntersection = dontIntersect();
     closestIntersection.distance = PATH_INFINITY;
 
@@ -32,13 +32,13 @@ vec3 getNormal(Intersection intersect) {
     return NULL_VECTOR;
 }
 
-bool lightPositionIsVisibleFrom(RayEntity pointToLightRay) {
-    Intersection intersect = getClosestIntersection(pointToLightRay);
+bool lightPositionIsVisibleFrom(RayEntity pointToLightRay, ObjectEntity sceneObjects[sceneNumObjects]) {
+    Intersection intersect = getClosestIntersection(pointToLightRay, sceneObjects);
 
     return ! intersect.intersect;
 }
 
-vec3 getLightContributionColor(Intersection intersection) {
+vec3 getLightContributionColor(Intersection intersection, ObjectEntity sceneObjects[sceneNumObjects]) {
 
     vec3 finalAmbiantColor = u_ambiant_color;
     vec3 finalDiffuseColor = vec3(0.0, 0.0, 0.0);
@@ -57,7 +57,7 @@ vec3 getLightContributionColor(Intersection intersection) {
         
         pointToLightRay.direction = normalize(o - adaptedIntersectionPoint);
 
-        if( lightPositionIsVisibleFrom(pointToLightRay) ) {
+        if( lightPositionIsVisibleFrom(pointToLightRay, sceneObjects) ) {
 
             float diffuseFactor = clamp(dot(intersectionNormal, pointToLightRay.direction), 0.0, 1.0);
 

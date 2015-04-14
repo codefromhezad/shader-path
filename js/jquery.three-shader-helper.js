@@ -65,7 +65,7 @@ var PLUGIN_NAME = 'THREEShaderHelper';
     };
 
 
-    $[PLUGIN_NAME] = function(opts) {
+    $[PLUGIN_NAME] = function(opts, parameter) {
 
         /* Options / Settings handling */
         var defaults = {
@@ -84,23 +84,54 @@ var PLUGIN_NAME = 'THREEShaderHelper';
             onSceneInit: null,
             onFrame: null
         }
-        var opts = $.extend(defaults, opts);
+
+        if( H.isObject( opts ) ) {
+            opts = $.extend(defaults, opts);
+        } else {
+
+            /* Modifiers/Helpers once the plugin is launched */
+
+            if( typeof opts == 'string' ) {
+                switch( opts ) {
+                    case 'debug':
+                        if( ! parameter ) {
+                            return false;
+                        }
+                        if( ! window[PLUGIN_NAME+'_dbg'][parameter] ) {
+                            H.logger.error('Unkown debug slug: ' + parameter);
+                            return false;
+                        }
+                        H.logger.as(parameter).info(window[PLUGIN_NAME+'_dbg'][parameter]);
+                        return false;
+                }
+            }
+        }
 
         H.logger.isActive = opts.debug;
         H.logger.domainPadLength = 10;
 
 
+        window[PLUGIN_NAME+'_dbg'] = {};
+        var registerDbgData = function(slug, data) {
+            window[PLUGIN_NAME+'_dbg'][slug] = data;
+        }
+        var showDebugSlugs = function() {
+            var slugs = Object.keys(window[PLUGIN_NAME+'_dbg']).join(', ');
+            H.logger.as('Debug').info("For more debug data, type $.THREEShaderHelper('debug', '<debug slug>') in the console.");
+            H.logger.as('Debug').info("Available debug slugs: " + slugs);
+        }
+
         /* Initial shaders to load debug logs */
         if( opts.vertexShaderFile ) {
-            H.logger.as('Init').info('Loading vertex shader file ...');
+            H.logger.as('Init').info('Vertex shader: ' + opts.vertexShaderFile);
         } else {
-            H.logger.as('Init').info('Using default vertex shader.');
+            H.logger.as('Init').info('Vertex shader: Default');
         }
 
         if( opts.fragmentShaderFile ) {
-            H.logger.as('Init').info('Loading fragment shader file ...');
+            H.logger.as('Init').info('Fragment shader: ' + opts.fragmentShaderFile);
         } else {
-            H.logger.as('Init').info('Using default fragment shader.');
+            H.logger.as('Init').info('Fragment shader: Default');
         }
 
 
@@ -125,8 +156,9 @@ var PLUGIN_NAME = 'THREEShaderHelper';
 
         var shaderUniforms = parsedUniforms;
 
-        H.logger.as('Init').info('Declared uniforms', shaderUniforms);
-
+        H.logger.as('Init').info(H.objSize(shaderUniforms) + ' uniforms loaded');
+        registerDbgData('uniforms', shaderUniforms);
+        
         threeCamera.position.z = 1;
         threeRenderer.setPixelRatio( window.devicePixelRatio );
 
@@ -137,13 +169,11 @@ var PLUGIN_NAME = 'THREEShaderHelper';
         if( opts.vertexShaderFile ) {
             listOfDeferredLoaders.push( $.get(opts.vertexShaderFile, function(data) { 
                 opts.vertexShaderContents = data; 
-                H.logger.as('Init').info('Vertex shader file loaded.');
             }) );
         }
         if( opts.fragmentShaderFile ) {
             listOfDeferredLoaders.push( $.get(opts.fragmentShaderFile, function(data) { 
                 opts.fragmentShaderContents = data; 
-                H.logger.as('Init').info('Fragment shader file loaded.');
             }) );
         }
         if( opts.shaderIncludeFiles ) {
@@ -158,12 +188,16 @@ var PLUGIN_NAME = 'THREEShaderHelper';
             }
         }
 
+
+
         /* The actual rendering function. This will be called later (we'll check if
            we need to load some shaders files beforehand first. Check the next comment) */
         var renderMain = function() {
 
             if( opts.shaderIncludeContents ) {
-                H.logger.as('Parser').info('Injected includes', opts.shaderIncludeFiles);
+                H.logger.as('Init').info(H.objSize(opts.shaderIncludeFiles) + ' files injected as includes');
+                registerDbgData('includes', opts.shaderIncludeFiles);
+
                 for( var includeName in opts.shaderIncludeContents ) {
                     var includeRegexp = new RegExp("\{\{ *include +"+includeName+" *\}\}", 'g');
                     opts.vertexShaderContents = opts.vertexShaderContents.replace(includeRegexp, opts.shaderIncludeContents[includeName]);
@@ -172,7 +206,9 @@ var PLUGIN_NAME = 'THREEShaderHelper';
             }
 
             if( opts.shaderInject ) {
-                H.logger.as('Parser').info('Injected variables', opts.shaderInject);
+                H.logger.as('Init').info(H.objSize(opts.shaderInject) + ' template variables injected');
+                registerDbgData('vars', opts.shaderInject);
+
                 for( var varName in opts.shaderInject ) {
                     var injectorRegexp = new RegExp("\{\{ *var +"+varName+" *\}\}", 'g');
                     opts.vertexShaderContents = opts.vertexShaderContents.replace(injectorRegexp, opts.shaderInject[varName]);
@@ -217,11 +253,15 @@ var PLUGIN_NAME = 'THREEShaderHelper';
                 window.requestAnimationFrame(renderFrameAnimate);
             }
 
+            H.logger.as('Init').info('Ready to render');
+
             if( opts.animate ) {
                 window.requestAnimationFrame(renderFrameAnimate);
             } else {
                 renderFrame();
             }
+
+            showDebugSlugs();
         }
 
         /* Shader files loading with jquery Ajax helpers */
