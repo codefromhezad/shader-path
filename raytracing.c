@@ -51,9 +51,9 @@ vec3 getLightContributionColor(Intersection intersection) {
     pointToLightRay.origin = adaptedIntersectionPoint;
 
     for(int i = 0; i < sceneNumLights; i++) {
-        vec3 o = u_lights_origin[i];
-        vec3 c = u_lights_color[i];
-        float intensity = u_lights_intensity[i];
+        vec3 o = u_lights[i].origin;
+        vec3 c = u_lights[i].color;
+        float intensity = u_lights[i].intensity;
         
         pointToLightRay.direction = normalize(o - adaptedIntersectionPoint);
 

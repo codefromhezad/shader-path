@@ -16,6 +16,12 @@ struct ObjectEntity {
     float reflection;
 };
 
+struct LightEntity {
+    vec3 origin;
+    vec3 color;
+    float intensity;
+};
+
 struct RayEntity {
     vec3 origin;
     vec3 direction;

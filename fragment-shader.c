@@ -1,18 +1,18 @@
 const int sceneNumLights = {{ var num_lights }};
 const int sceneNumObjects = 3;
 
+{{ include defines }}
+{{ include structs }}
+
+
+
+
 uniform vec2 u_screen_size;
 uniform int u_frame_count;
 uniform vec3 u_ambiant_color;
 
-uniform vec3 u_lights_origin[ sceneNumLights ];
-uniform vec3 u_lights_color[ sceneNumLights ];
-uniform float u_lights_intensity[ sceneNumLights ];
+uniform LightEntity u_lights[sceneNumLights];
 
-
-
-{{ include defines }}
-{{ include structs }}
 {{ include obj-sphere-functions }}
 {{ include obj-plane-functions }}
 

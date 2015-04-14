@@ -47,6 +47,8 @@ var PLUGIN_NAME = 'THREEShaderHelper';
             threeRenderer = new THREE.WebGLRenderer(),
             screenPlane   = new THREE.PlaneBufferGeometry( 2, 2 );
 
+        window.exposedRenderer = threeRenderer;
+        
         var shaderUniforms = {
             u_screen_size:  { type: "v2", value: new THREE.Vector2(opts.canvasSize.w, opts.canvasSize.h) },
             u_frame_count: { type: "i", value: 0 }
