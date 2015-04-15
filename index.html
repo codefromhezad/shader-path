@@ -54,6 +54,17 @@
                     }
                 },
                 {
+                    objectType: { type: "i", value: PATH_OBJECT_SPHERE },
+                    origin: { type: "v3", value: new THREE.Vector3(200.0, 100.0, 400.0) },
+                    radius: { type: "f", value: 150.0 },
+                    material: {
+                        diffuseColor: { type: "v3", value: new THREE.Vector3(0.5, 1.0, 0.7) },
+                        specular: { type: "f", value: 1.0 },
+                        shininess: { type: "f", value: 100.0 },
+                        reflection: { type: "f", value: 0.4 }
+                    }
+                },
+                {
                     objectType: { type: "i", value: PATH_OBJECT_PLANE },
                     origin: { type: "v3", value: new THREE.Vector3(0.0, -50.0, 100.0) },
                     normal: { type: "v3", value: new THREE.Vector3(0.0, 1.0, 0.0) },
@@ -74,8 +85,8 @@
                 onSceneInit: function() { $('.loading').remove(); },
                 animate: false,
                 shaderInject: {
-                    num_lights: 2,
-                    num_objects: 2
+                    num_lights: sceneLights.length,
+                    num_objects: sceneObjects.length
                 },
                 shaderIncludeFiles: {
                     'structs':      'structs.c',
