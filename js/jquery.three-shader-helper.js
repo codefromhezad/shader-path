@@ -65,7 +65,7 @@ var PLUGIN_NAME = 'THREEShaderHelper';
     };
 
 
-    $[PLUGIN_NAME] = function(opts, parameter) {
+    $[PLUGIN_NAME] = function(opts) {
 
         /* Options / Settings handling */
         var defaults = {
@@ -94,14 +94,7 @@ var PLUGIN_NAME = 'THREEShaderHelper';
             if( typeof opts == 'string' ) {
                 switch( opts ) {
                     case 'debug':
-                        if( ! parameter ) {
-                            return false;
-                        }
-                        if( ! window[PLUGIN_NAME+'_dbg'][parameter] ) {
-                            H.logger.error('Unkown debug slug: ' + parameter);
-                            return false;
-                        }
-                        H.logger.as(parameter).info(window[PLUGIN_NAME+'_dbg'][parameter]);
+                        H.logger.as('Debug').info(window[PLUGIN_NAME+'_dbg_opts']);
                         return false;
                 }
             }
@@ -109,17 +102,6 @@ var PLUGIN_NAME = 'THREEShaderHelper';
 
         H.logger.isActive = opts.debug;
         H.logger.domainPadLength = 10;
-
-
-        window[PLUGIN_NAME+'_dbg'] = {};
-        var registerDbgData = function(slug, data) {
-            window[PLUGIN_NAME+'_dbg'][slug] = data;
-        }
-        var showDebugSlugs = function() {
-            var slugs = Object.keys(window[PLUGIN_NAME+'_dbg']).join(', ');
-            H.logger.as('Debug').info("For more debug data, type $.THREEShaderHelper('debug', '<debug slug>') in the console.");
-            H.logger.as('Debug').info("Available debug slugs: " + slugs);
-        }
 
         /* Initial shaders to load debug logs */
         if( opts.vertexShaderFile ) {
@@ -157,11 +139,13 @@ var PLUGIN_NAME = 'THREEShaderHelper';
         var shaderUniforms = parsedUniforms;
 
         H.logger.as('Init').info(H.objSize(shaderUniforms) + ' uniforms loaded');
-        registerDbgData('uniforms', shaderUniforms);
-        
+
         threeCamera.position.z = 1;
         threeRenderer.setPixelRatio( window.devicePixelRatio );
 
+        // Putting generated uniforms back in the uniforms option to help debug
+        opts.uniforms = shaderUniforms;
+        opts.userUniforms = tempShaderUniforms;
 
         /* Updating Shaders contents if a filename was specified. In this case,
            we build an array of jquery deferred objects to load them with AJAX */
@@ -196,7 +180,6 @@ var PLUGIN_NAME = 'THREEShaderHelper';
 
             if( opts.shaderIncludeContents ) {
                 H.logger.as('Init').info(H.objSize(opts.shaderIncludeFiles) + ' files injected as includes');
-                registerDbgData('includes', opts.shaderIncludeFiles);
 
                 for( var includeName in opts.shaderIncludeContents ) {
                     var includeRegexp = new RegExp("\{\{ *include +"+includeName+" *\}\}", 'g');
@@ -207,7 +190,6 @@ var PLUGIN_NAME = 'THREEShaderHelper';
 
             if( opts.shaderInject ) {
                 H.logger.as('Init').info(H.objSize(opts.shaderInject) + ' template variables injected');
-                registerDbgData('vars', opts.shaderInject);
 
                 for( var varName in opts.shaderInject ) {
                     var injectorRegexp = new RegExp("\{\{ *var +"+varName+" *\}\}", 'g');
@@ -255,13 +237,13 @@ var PLUGIN_NAME = 'THREEShaderHelper';
 
             H.logger.as('Init').info('Ready to render');
 
+            window[PLUGIN_NAME+'_dbg_opts'] = opts;
+
             if( opts.animate ) {
                 window.requestAnimationFrame(renderFrameAnimate);
             } else {
                 renderFrame();
             }
-
-            showDebugSlugs();
         }
 
         /* Shader files loading with jquery Ajax helpers */
