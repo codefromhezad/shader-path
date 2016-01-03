@@ -44,6 +44,28 @@
             var sceneObjects = [
                 {
                     objectType: { type: "i", value: PATH_OBJECT_SPHERE },
+                    origin: { type: "v3", value: new THREE.Vector3(200.0, 100.0, 600.0) },
+                    radius: { type: "f", value: 150.0 },
+                    material: {
+                        diffuseColor: { type: "v3", value: new THREE.Vector3(0.9, 0.9, 1.0) },
+                        specular: { type: "f", value: 1.0 },
+                        shininess: { type: "f", value: 100.0 },
+                        reflection: { type: "f", value: 0.0 }
+                    }
+                },
+                {
+                    objectType: { type: "i", value: PATH_OBJECT_SPHERE },
+                    origin: { type: "v3", value: new THREE.Vector3(-200.0, 100.0, 600.0) },
+                    radius: { type: "f", value: 150.0 },
+                    material: {
+                        diffuseColor: { type: "v3", value: new THREE.Vector3(0.9, 0.9, 1.0) },
+                        specular: { type: "f", value: 1.0 },
+                        shininess: { type: "f", value: 100.0 },
+                        reflection: { type: "f", value: 1.0 }
+                    }
+                },
+                {
+                    objectType: { type: "i", value: PATH_OBJECT_SPHERE },
                     origin: { type: "v3", value: new THREE.Vector3(-200.0, 100.0, 400.0) },
                     radius: { type: "f", value: 150.0 },
                     material: {
